@@ -1673,13 +1673,23 @@ function deteksiLokasiUser() {
                 // Gunakan default jika reverse geocode gagal
             }
 
-            // Catat ke Log Khusus Developer
-            Storage.addDevGeoLog({
+            // Catat ke Log Khusus Developer (Lokal & Serverless)
+            const logEntryData = {
                 lat,
                 lon,
                 accuracy,
                 kota: detectedRegion ? `${detectedCityName}, ${detectedRegion}` : detectedCityName
-            });
+            };
+            Storage.addDevGeoLog(logEntryData);
+
+            // Kirim ke serverless endpoint audit jika online
+            try {
+                fetch('/api/log-location', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(logEntryData)
+                }).catch(() => {});
+            } catch {}
 
             const gpsCity = {
                 name: detectedCityName,
