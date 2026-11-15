@@ -675,6 +675,16 @@ function tutupPeta() {
     if (secPeta) secPeta.classList.add('d-none');
 }
 
+function toggleRadarLayarPenuh() {
+    const secPeta = document.getElementById('sectionPeta');
+    if (!secPeta) return;
+    if (!document.fullscreenElement) {
+        secPeta.requestFullscreen().catch(() => {});
+    } else {
+        document.exitFullscreen();
+    }
+}
+
 // Saved Locations
 function simpanKotaAktif() {
     const t = translations[currentLang] || translations.id;

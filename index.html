@@ -39,13 +39,9 @@
             <!-- Desktop Links -->
             <nav class="d-none d-lg-flex align-items-center site-nav">
                 <a href="index.html" class="nav-item-link active"><i class="bi bi-compass"></i> Kondisi Terkini</a>
-                <a href="#" class="nav-item-link" onclick="bukaPetaCuaca(); return false;"><i class="bi bi-map"></i>
-                    Peta Radar</a>
-                <a href="#" class="nav-item-link" data-bs-toggle="modal" data-bs-target="#modalSaved"
-                    onclick="tampilkanKotaTersimpan()"><i class="bi bi-bookmark"></i> Kota Tersimpan</a>
-                <a href="radar.php" class="nav-item-link"><i class="bi bi-radar"></i> Radar Satelit</a>
-                <a href="prakiraan-cuaca.php" class="nav-item-link"><i class="bi bi-broadcast"></i> Stasiun BMKG</a>
-                <a href="cuaca-buruk.php" class="nav-item-link"><i class="bi bi-shield-exclamation"></i> Siaga Cuaca</a>
+                <a href="#" class="nav-item-link" onclick="bukaPetaCuaca(); return false;"><i class="bi bi-map"></i> Peta Radar Interaktif</a>
+                <a href="#" class="nav-item-link" data-bs-toggle="modal" data-bs-target="#modalSaved" onclick="tampilkanKotaTersimpan()"><i class="bi bi-bookmark"></i> Kota Tersimpan</a>
+                <a href="#" class="nav-item-link" data-bs-toggle="modal" data-bs-target="#modalRiwayatBencana" onclick="muatRiwayatBencana()"><i class="bi bi-clock-history"></i> Riwayat Peringatan</a>
             </nav>
 
             <!-- Unit & Language Switches + Mobile Toggle -->
@@ -84,25 +80,10 @@
         </div>
         <div class="offcanvas-body d-flex flex-column justify-content-between p-4">
             <div class="d-flex flex-column gap-2">
-                <a href="index.html" class="nav-item-link active py-2"><i class="bi bi-compass me-2"></i> Kondisi
-                    Terkini</a>
-                <a href="#" class="nav-item-link py-2" data-bs-dismiss="offcanvas" onclick="bukaPetaCuaca()"><i
-                        class="bi bi-map me-2"></i> Peta Radar Interaktif</a>
-                <a href="#" class="nav-item-link py-2" data-bs-dismiss="offcanvas" data-bs-toggle="modal"
-                    data-bs-target="#modalSaved" onclick="tampilkanKotaTersimpan()"><i class="bi bi-bookmark me-2"></i>
-                    Kota Tersimpan</a>
-                <hr class="border-subtle my-2">
-                <span class="text-tertiary x-small fw-bold mb-1">Layanan Informasi</span>
-                <a href="radar.php" class="nav-item-link py-2"><i class="bi bi-radar me-2 text-blue"></i> Radar
-                    Satelit</a>
-                <a href="prakiraan-cuaca.php" class="nav-item-link py-2"><i class="bi bi-broadcast me-2 text-green"></i>
-                    Data Stasiun BMKG</a>
-                <a href="cuaca-buruk.php" class="nav-item-link py-2"><i
-                        class="bi bi-shield-exclamation me-2 text-red"></i> Siaga Cuaca Buruk</a>
-                <a href="topan.php" class="nav-item-link py-2"><i class="bi bi-hurricane me-2 text-white"></i> Siklon
-                    Tropis dan Topan</a>
-                <a href="video.php" class="nav-item-link py-2"><i class="bi bi-play-circle me-2 text-yellow"></i> Video
-                    Analisis Cuaca</a>
+                <a href="index.html" class="nav-item-link active py-2"><i class="bi bi-compass me-2"></i> Kondisi Terkini</a>
+                <a href="#" class="nav-item-link py-2" data-bs-dismiss="offcanvas" onclick="bukaPetaCuaca()"><i class="bi bi-map me-2"></i> Peta Radar Interaktif</a>
+                <a href="#" class="nav-item-link py-2" data-bs-dismiss="offcanvas" data-bs-toggle="modal" data-bs-target="#modalSaved" onclick="tampilkanKotaTersimpan()"><i class="bi bi-bookmark me-2"></i> Kota Tersimpan</a>
+                <a href="#" class="nav-item-link py-2" data-bs-dismiss="offcanvas" data-bs-toggle="modal" data-bs-target="#modalRiwayatBencana" onclick="muatRiwayatBencana()"><i class="bi bi-clock-history me-2"></i> Riwayat Peringatan</a>
             </div>
             <div class="text-tertiary x-small pt-3 border-top border-subtle">
                 Portal Pemantauan Cuaca dan Iklim Indonesia.
@@ -124,9 +105,10 @@
                     </div>
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="cuaca-buruk.php" class="btn btn-sm btn-outline-danger px-3 py-1 x-small rounded-2">
-                        Panduan Siaga
-                    </a>
+                    <button class="btn btn-sm btn-outline-danger px-3 py-1 x-small rounded-2" data-bs-toggle="modal"
+                        data-bs-target="#modalPanduanSiaga">
+                        <i class="bi bi-shield-check me-1"></i> Panduan Siaga
+                    </button>
                     <button class="btn btn-sm btn-outline-light px-3 py-1 x-small rounded-2" data-bs-toggle="modal"
                         data-bs-target="#modalRiwayatBencana">
                         Log Riwayat
@@ -350,9 +332,9 @@
                         <span class="text-tertiary x-small">Peta numerik interaktif berpusat pada wilayah aktif</span>
                     </div>
                     <div class="d-flex gap-2">
-                        <a href="radar.php" class="btn btn-sm btn-outline-light px-3 py-1 x-small rounded-2">
-                            <i class="bi bi-arrows-fullscreen me-1"></i> Buka Layar Penuh
-                        </a>
+                        <button type="button" class="btn btn-sm btn-outline-light px-3 py-1 x-small rounded-2" onclick="toggleRadarLayarPenuh()">
+                            <i class="bi bi-arrows-fullscreen me-1"></i> Layar Penuh
+                        </button>
                         <button class="btn btn-sm btn-outline-secondary px-3 py-1 x-small rounded-2"
                             onclick="tutupPeta()">
                             Tutup
@@ -366,97 +348,6 @@
                 </div>
             </div>
 
-        </div>
-
-        <!-- Section: Layanan Informasi & Menu Khusus -->
-        <div class="mt-4">
-            <div class="section-headline" data-i18n="menu_title">
-                Layanan dan Informasi Khusus
-            </div>
-
-            <div class="editorial-menu-grid">
-
-                <!-- 1. Radar Peta -->
-                <a href="radar.php" class="editorial-menu-card">
-                    <div>
-                        <div class="menu-symbol-box symbol-radar">
-                            <i class="bi bi-radar"></i>
-                        </div>
-                        <h6 class="menu-card-heading" data-i18n="radar_label">Radar Satelit Cuaca</h6>
-                        <p class="menu-card-summary" data-i18n="radar_desc">Pantauan langsung pergerakan awan konvektif,
-                            angin, dan hujan di Nusantara.</p>
-                    </div>
-                    <div class="menu-card-footer">
-                        <span data-i18n="view_link">Lihat Selengkapnya</span>
-                        <i class="bi bi-arrow-right"></i>
-                    </div>
-                </a>
-
-                <!-- 2. Stasiun BMKG -->
-                <a href="prakiraan-cuaca.php" class="editorial-menu-card">
-                    <div>
-                        <div class="menu-symbol-box symbol-bmkg">
-                            <i class="bi bi-broadcast"></i>
-                        </div>
-                        <h6 class="menu-card-heading" data-i18n="bmkg_label">Stasiun Resmi BMKG</h6>
-                        <p class="menu-card-summary" data-i18n="bmkg_desc">Data prakiraan resmi tingkat kecamatan dan
-                            kelurahan BMKG.</p>
-                    </div>
-                    <div class="menu-card-footer">
-                        <span data-i18n="view_link">Lihat Selengkapnya</span>
-                        <i class="bi bi-arrow-right"></i>
-                    </div>
-                </a>
-
-                <!-- 3. Siaga Cuaca Buruk -->
-                <a href="cuaca-buruk.php" class="editorial-menu-card">
-                    <div>
-                        <div class="menu-symbol-box symbol-alert">
-                            <i class="bi bi-shield-exclamation"></i>
-                        </div>
-                        <h6 class="menu-card-heading" data-i18n="alert_label">Siaga Cuaca Buruk</h6>
-                        <p class="menu-card-summary" data-i18n="alert_desc">Protokol darurat bencana hidrometeorologi
-                            dan kontak pertolongan.</p>
-                    </div>
-                    <div class="menu-card-footer">
-                        <span data-i18n="view_link">Lihat Selengkapnya</span>
-                        <i class="bi bi-arrow-right"></i>
-                    </div>
-                </a>
-
-                <!-- 4. Siklon Tropis & Topan -->
-                <a href="topan.php" class="editorial-menu-card">
-                    <div>
-                        <div class="menu-symbol-box symbol-cyclone">
-                            <i class="bi bi-hurricane"></i>
-                        </div>
-                        <h6 class="menu-card-heading" data-i18n="cyclone_label">Siklon Tropis dan Topan</h6>
-                        <p class="menu-card-summary" data-i18n="cyclone_desc">Pemantauan bibit siklon di Samudera Hindia
-                            dan Pasifik.</p>
-                    </div>
-                    <div class="menu-card-footer">
-                        <span data-i18n="view_link">Lihat Selengkapnya</span>
-                        <i class="bi bi-arrow-right"></i>
-                    </div>
-                </a>
-
-                <!-- 5. Video Meteorologi -->
-                <a href="video.php" class="editorial-menu-card">
-                    <div>
-                        <div class="menu-symbol-box symbol-video">
-                            <i class="bi bi-play-circle"></i>
-                        </div>
-                        <h6 class="menu-card-heading" data-i18n="video_label">Video Analisis BMKG</h6>
-                        <p class="menu-card-summary" data-i18n="video_desc">Laporan visual dinamika atmosfer dan edukasi
-                            kesiapsiagaan.</p>
-                    </div>
-                    <div class="menu-card-footer">
-                        <span data-i18n="view_link">Lihat Selengkapnya</span>
-                        <i class="bi bi-arrow-right"></i>
-                    </div>
-                </a>
-
-            </div>
         </div>
 
         <!-- Initial loading state placeholder -->
@@ -507,6 +398,54 @@
                         onclick="bersihkanRiwayatBencana()" data-i18n="history_clear">Kosongkan Log</button>
                     <button type="button" class="btn btn-sm btn-outline-light px-3 py-1 x-small rounded-2"
                         data-bs-dismiss="modal" data-i18n="modal_close">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Panduan Siaga Cuaca Ekstrem (100% Static & Client-Side) -->
+    <div class="modal fade" id="modalPanduanSiaga" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content modal-editorial">
+                <div class="modal-header border-bottom border-subtle">
+                    <h5 class="modal-title fw-bold fs-6"><i class="bi bi-shield-exclamation text-red me-2"></i>Panduan Kesiapsiagaan dan Tanggap Darurat</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-2 h-100" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-color);">
+                                <h6 class="text-white fw-bold mb-2 small"><i class="bi bi-lightning-charge text-yellow me-1"></i> Saat Terjadi Badai Petir / Angin Kencang</h6>
+                                <ul class="text-secondary x-small ps-3 mb-0">
+                                    <li class="mb-1">Hindari berteduh di bawah pohon tinggi, papan reklame, atau tiang listrik.</li>
+                                    <li class="mb-1">Cabut stopkontak peralatan elektronik rumah tangga untuk mencegah korsleting.</li>
+                                    <li>Jauhi jendela kaca dan segera masuk ke dalam bangunan permanen yang kokoh.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-2 h-100" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-color);">
+                                <h6 class="text-white fw-bold mb-2 small"><i class="bi bi-droplet-half text-blue me-1"></i> Saat Terjadi Hujan Lebat / Potensi Banjir</h6>
+                                <ul class="text-secondary x-small ps-3 mb-0">
+                                    <li class="mb-1">Matikan sakelar sekring listrik utama segera jika genangan air mulai masuk rumah.</li>
+                                    <li class="mb-1">Pindahkan dokumen berharga dan barang elektronik ke tempat yang lebih tinggi.</li>
+                                    <li>Siapkan tas darurat mandiri (obat P3K, senter, air minum, dan pakaian kering).</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3 rounded-2" style="background: var(--bg-input); border: 1px solid var(--border-color);">
+                        <span class="text-tertiary x-small fw-bold d-block mb-2">Kontak Cepat Bantuan Darurat Resmi Nasional:</span>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a href="tel:117" class="badge bg-danger text-white text-decoration-none px-3 py-2"><i class="bi bi-telephone-fill me-1"></i> BNPB: 117</a>
+                            <a href="tel:115" class="badge bg-warning text-dark text-decoration-none px-3 py-2"><i class="bi bi-telephone-fill me-1"></i> BASARNAS: 115</a>
+                            <a href="tel:196" class="badge bg-secondary text-white text-decoration-none px-3 py-2"><i class="bi bi-telephone-fill me-1"></i> BMKG: 196</a>
+                            <a href="tel:123" class="badge bg-dark text-white border border-secondary text-decoration-none px-3 py-2"><i class="bi bi-telephone-fill me-1"></i> PLN: 123</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-top border-subtle">
+                    <button type="button" class="btn btn-sm btn-outline-light px-3 py-1 x-small rounded-2" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>
