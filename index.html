@@ -38,8 +38,8 @@
 
             <!-- Desktop Links -->
             <nav class="d-none d-lg-flex align-items-center site-nav">
-                <a href="index.html" class="nav-item-link active"><i class="bi bi-compass"></i> Kondisi Terkini</a>
-                <a href="#" class="nav-item-link" onclick="bukaPetaCuaca(); return false;"><i class="bi bi-map"></i> Peta Radar Interaktif</a>
+                <a href="#" class="nav-item-link nav-link-kondisi active" onclick="bukaKondisiTerkini(); return false;"><i class="bi bi-compass"></i> Kondisi Terkini</a>
+                <a href="#" class="nav-item-link nav-link-radar" onclick="bukaPetaCuaca(); return false;"><i class="bi bi-map"></i> Peta Radar Interaktif</a>
                 <a href="#" class="nav-item-link" data-bs-toggle="modal" data-bs-target="#modalSaved" onclick="tampilkanKotaTersimpan()"><i class="bi bi-bookmark"></i> Kota Tersimpan</a>
                 <a href="#" class="nav-item-link" data-bs-toggle="modal" data-bs-target="#modalRiwayatBencana" onclick="muatRiwayatBencana()"><i class="bi bi-clock-history"></i> Riwayat Peringatan</a>
             </nav>
@@ -80,8 +80,8 @@
         </div>
         <div class="offcanvas-body d-flex flex-column justify-content-between p-4">
             <div class="d-flex flex-column gap-2">
-                <a href="index.html" class="nav-item-link active py-2"><i class="bi bi-compass me-2"></i> Kondisi Terkini</a>
-                <a href="#" class="nav-item-link py-2" data-bs-dismiss="offcanvas" onclick="bukaPetaCuaca()"><i class="bi bi-map me-2"></i> Peta Radar Interaktif</a>
+                <a href="#" class="nav-item-link nav-link-kondisi active py-2" data-bs-dismiss="offcanvas" onclick="bukaKondisiTerkini(); return false;"><i class="bi bi-compass me-2"></i> Kondisi Terkini</a>
+                <a href="#" class="nav-item-link nav-link-radar py-2" data-bs-dismiss="offcanvas" onclick="bukaPetaCuaca(); return false;"><i class="bi bi-map me-2"></i> Peta Radar Interaktif</a>
                 <a href="#" class="nav-item-link py-2" data-bs-dismiss="offcanvas" data-bs-toggle="modal" data-bs-target="#modalSaved" onclick="tampilkanKotaTersimpan()"><i class="bi bi-bookmark me-2"></i> Kota Tersimpan</a>
                 <a href="#" class="nav-item-link py-2" data-bs-dismiss="offcanvas" data-bs-toggle="modal" data-bs-target="#modalRiwayatBencana" onclick="muatRiwayatBencana()"><i class="bi bi-clock-history me-2"></i> Riwayat Peringatan</a>
             </div>

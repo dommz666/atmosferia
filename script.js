@@ -318,7 +318,7 @@ function ubahTemaCuaca(data) {
     const weatherDesc = weatherCode.toLowerCase();
     const iconStr = data.weather[0].icon || '';
 
-    // Hitung waktu lokal kota yang tepat dari offset timezone API
+
     const timezoneOffset = data.timezone !== undefined ? data.timezone : 25200;
     const localDate = getWaktuLokalKota(timezoneOffset);
     const hour = localDate.getHours();
@@ -662,17 +662,41 @@ function updatePetaKoordinat(lat, lon) {
     }
 }
 
+// Nav Active State Controller
+function setActiveNav(navKey) {
+    const linksKondisi = document.querySelectorAll('.nav-link-kondisi');
+    const linksRadar = document.querySelectorAll('.nav-link-radar');
+
+    if (navKey === 'radar') {
+        linksRadar.forEach(el => el.classList.add('active'));
+        linksKondisi.forEach(el => el.classList.remove('active'));
+    } else {
+        linksKondisi.forEach(el => el.classList.add('active'));
+        linksRadar.forEach(el => el.classList.remove('active'));
+    }
+}
+
+function bukaKondisiTerkini() {
+    setActiveNav('kondisi');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function bukaPetaCuaca() {
     const secPeta = document.getElementById('sectionPeta');
     if (secPeta) {
         secPeta.classList.remove('d-none');
-        secPeta.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => {
+            secPeta.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 50);
     }
+    setActiveNav('radar');
 }
 
 function tutupPeta() {
     const secPeta = document.getElementById('sectionPeta');
     if (secPeta) secPeta.classList.add('d-none');
+    setActiveNav('kondisi');
+    bukaKondisiTerkini();
 }
 
 function toggleRadarLayarPenuh() {
@@ -872,6 +896,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnEn = document.getElementById('langEn');
     if (btnId) btnId.addEventListener('click', () => setLanguage('id'));
     if (btnEn) btnEn.addEventListener('click', () => setLanguage('en'));
+
+    window.addEventListener('scroll', () => {
+        const secPeta = document.getElementById('sectionPeta');
+        if (!secPeta || secPeta.classList.contains('d-none')) {
+            setActiveNav('kondisi');
+            return;
+        }
+        const rect = secPeta.getBoundingClientRect();
+        if (rect.top <= window.innerHeight * 0.5 && rect.bottom >= window.innerHeight * 0.2) {
+            setActiveNav('radar');
+        } else if (window.scrollY < 300) {
+            setActiveNav('kondisi');
+        }
+    }, { passive: true });
 
     cariKotaCepat('Bandung');
 });
