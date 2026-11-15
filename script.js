@@ -81,7 +81,8 @@ const translations = {
         already_saved: 'sudah ada di daftar favorit.',
         geo_not_supported: 'Perangkat tidak mendukung deteksi lokasi.',
         geo_denied: 'Izin lokasi tidak diberikan.',
-        geo_loading: 'Mendeteksi titik koordinat Anda...'
+        geo_loading: 'Mendeteksi titik koordinat Anda...',
+        btn_my_location: 'Cek Lokasi Saya'
     },
     en: {
         app_tagline: 'Indonesian Weather Portal',
@@ -123,7 +124,8 @@ const translations = {
         already_saved: 'is already in your saved locations.',
         geo_not_supported: 'Geolocation not supported by this device.',
         geo_denied: 'Location permission denied.',
-        geo_loading: 'Detecting your coordinates...'
+        geo_loading: 'Detecting your coordinates...',
+        btn_my_location: 'Check My Location'
     }
 };
 
@@ -498,7 +500,7 @@ async function ambilDataCuaca(kota) {
 }
 
 // GPS Geolocation Handler
-async function ambilDataCuacaKoordinat(lat, lon) {
+async function ambilDataCuacaKoordinat(lat, lon, isFromGeo = true) {
     const t = translations[currentLang] || translations.id;
     try {
         pesanInfo.innerHTML = `
@@ -523,12 +525,62 @@ async function ambilDataCuacaKoordinat(lat, lon) {
         tampilkanData(dataCurrent, dataForecast);
         deteksiPotensiBencana(dataCurrent);
         updatePetaKoordinat(lat, lon);
-        tandaiTagKotaAktif(dataCurrent.name);
+        tandaiTagKotaAktif(dataCurrent.name, isFromGeo);
 
     } catch (error) {
         tampilkanToast(error.message, 'danger');
         pesanInfo.innerHTML = '';
+        cariKotaCepat('Bandung');
     }
+}
+
+// User Location Auto-Detect & Click Handler
+function deteksiLokasiUser(isAutoInit = false) {
+    const t = translations[currentLang] || translations.id;
+    const btnCek = document.getElementById('btnCekLokasiSaya');
+    const btnGeo = document.getElementById('btnGeo');
+
+    if (!navigator.geolocation) {
+        if (!isAutoInit) {
+            tampilkanToast(t.geo_not_supported, 'danger');
+        } else {
+            cariKotaCepat('Bandung');
+        }
+        return;
+    }
+
+    if (btnCek) {
+        btnCek.innerHTML = `<span class="spinner-border spinner-border-sm me-1" role="status"></span> <span data-i18n="btn_my_location">${t.btn_my_location}</span>`;
+    }
+    if (btnGeo) {
+        btnGeo.innerHTML = `<span class="spinner-border spinner-border-sm" role="status"></span>`;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            if (btnCek) {
+                btnCek.innerHTML = `<i class="bi bi-geo-alt-fill text-blue me-1"></i> <span data-i18n="btn_my_location">${t.btn_my_location}</span>`;
+            }
+            if (btnGeo) {
+                btnGeo.innerHTML = `<i class="bi bi-crosshair"></i>`;
+            }
+            ambilDataCuacaKoordinat(pos.coords.latitude, pos.coords.longitude, true);
+        },
+        (err) => {
+            if (btnCek) {
+                btnCek.innerHTML = `<i class="bi bi-geo-alt-fill text-blue me-1"></i> <span data-i18n="btn_my_location">${t.btn_my_location}</span>`;
+            }
+            if (btnGeo) {
+                btnGeo.innerHTML = `<i class="bi bi-crosshair"></i>`;
+            }
+            if (!isAutoInit) {
+                tampilkanToast(t.geo_denied, 'danger');
+            } else {
+                cariKotaCepat('Bandung');
+            }
+        },
+        { timeout: 7000, maximumAge: 60000 }
+    );
 }
 
 // Main Render Function
@@ -641,14 +693,25 @@ function tampilkanData(data, forecast) {
     hasilCuaca.classList.remove('d-none');
 }
 
-function tandaiTagKotaAktif(namaKota) {
+function tandaiTagKotaAktif(namaKota, isFromGeo = false) {
+    const btnCek = document.getElementById('btnCekLokasiSaya');
+    let matched = false;
     document.querySelectorAll('.region-tag').forEach(tag => {
+        if (tag === btnCek) return;
         if (tag.textContent.trim().toLowerCase() === namaKota.toLowerCase()) {
             tag.classList.add('active');
+            matched = true;
         } else {
             tag.classList.remove('active');
         }
     });
+    if (btnCek) {
+        if (isFromGeo || !matched) {
+            btnCek.classList.add('active');
+        } else {
+            btnCek.classList.remove('active');
+        }
+    }
 }
 
 function cariKotaCepat(namaKota) {
@@ -866,25 +929,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (btnGeo) {
-        btnGeo.addEventListener('click', () => {
-            const t = translations[currentLang] || translations.id;
-            if (!navigator.geolocation) {
-                tampilkanToast(t.geo_not_supported, 'danger');
-                return;
-            }
-            btnGeo.innerHTML = `<span class="spinner-border spinner-border-sm" role="status"></span>`;
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    btnGeo.innerHTML = `<i class="bi bi-crosshair"></i>`;
-                    ambilDataCuacaKoordinat(pos.coords.latitude, pos.coords.longitude);
-                },
-                (err) => {
-                    btnGeo.innerHTML = `<i class="bi bi-crosshair"></i>`;
-                    tampilkanToast(t.geo_denied, 'danger');
-                },
-                { timeout: 10000 }
-            );
-        });
+        btnGeo.addEventListener('click', () => deteksiLokasiUser(false));
     }
 
     const btnC = document.getElementById('unitC');
@@ -911,5 +956,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, { passive: true });
 
-    cariKotaCepat('Bandung');
+    // Auto-detect lokasi user saat pertama kali dibuka (fallback ke Bandung jika izin ditolak/timeout)
+    deteksiLokasiUser(true);
 });

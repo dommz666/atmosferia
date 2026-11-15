@@ -431,6 +431,36 @@ h1, h2, h3, h4, h5, h6, .font-heading {
     color: #ffffff;
     font-weight: 600;
 }
+.btn-auto-detect {
+    background-color: var(--bg-surface-elevated);
+    border-color: var(--color-blue);
+    color: var(--text-white);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.btn-auto-detect i {
+    font-size: 0.82rem;
+    color: var(--color-blue);
+    transition: color 0.15s ease;
+}
+.btn-auto-detect:hover {
+    background-color: var(--color-blue);
+    border-color: var(--color-blue);
+    color: #ffffff;
+}
+.btn-auto-detect:hover i {
+    color: #ffffff !important;
+}
+.btn-auto-detect.active {
+    background-color: var(--color-blue);
+    border-color: var(--color-blue);
+    color: #ffffff;
+}
+.btn-auto-detect.active i {
+    color: #ffffff !important;
+}
 
 /* Kartu Editorial & Permukaan Data */
 .editorial-card {
