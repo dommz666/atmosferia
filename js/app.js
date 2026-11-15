@@ -549,6 +549,7 @@ function initGlobalExpositions() {
     window.bukaPetaCuaca = () => UI.bukaPetaCuaca();
     window.tutupPeta = () => UI.tutupPeta();
     window.bukaKondisiTerkini = () => UI.bukaKondisiTerkini();
+    window.bukaPrakiraanMingguan = () => UI.bukaPrakiraanMingguan();
     window.toggleRadarLayarPenuh = () => UI.toggleRadarLayarPenuh();
     window.simpanKotaAktif = simpanKotaAktif;
     window.tampilkanKotaTersimpan = tampilkanKotaTersimpan;

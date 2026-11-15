@@ -482,69 +482,161 @@ export const UI = {
 
     // --- 9. PRAKIRAAN 7 HARI KE DEPAN (Fitur Baru B.1) ---
     renderDailyForecast(dailyData) {
-        const container = document.getElementById('wadahPrakiraanMingguan');
-        if (!container || !dailyData || !dailyData.time) return;
+        const gridContainer = document.getElementById('wadahPrakiraanMingguan');
+        const listContainer = document.getElementById('daftarRincianMingguan');
+        const summaryContainer = document.getElementById('ringkasanMingguan');
+        if (!dailyData || !dailyData.time) return;
 
         const times = dailyData.time;
         const codes = dailyData.weather_code || [];
         const minTemps = dailyData.temperature_2m_min || [];
         const maxTemps = dailyData.temperature_2m_max || [];
         const probs = dailyData.precipitation_probability_max || [];
+        const winds = dailyData.wind_speed_10m_max || [];
+        const uvs = dailyData.uv_index_max || [];
 
         const dayNamesId = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
         const dayNamesEn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         const isId = Storage.getLang() === 'id';
         const dayNames = isId ? dayNamesId : dayNamesEn;
 
-        let html = '';
         const count = Math.min(times.length, 7);
 
+        // 1. Hitung Ringkasan Tren Mingguan
+        let rainDays = [];
+        let allMin = Infinity;
+        let allMax = -Infinity;
+
         for (let i = 0; i < count; i++) {
-            const dateObj = new Date(times[i] + 'T00:00:00');
-            let dayLabel = dayNames[dateObj.getDay()];
-            if (i === 0) dayLabel = isId ? 'Hari Ini' : 'Today';
-            else if (i === 1) dayLabel = isId ? 'Besok' : 'Tomorrow';
-
-            const dateLabel = `${dateObj.getDate()} ${dateObj.toLocaleString(isId ? 'id-ID' : 'en-US', { month: 'short' })}`;
-            const code = codes[i] ?? 0;
-            const minT = minTemps[i] ?? 20;
-            const maxT = maxTemps[i] ?? 30;
-            const prob = probs[i] ?? 0;
-            const iconClass = I18n.getWeatherIcon(code, true);
-            const desc = I18n.getWeatherDesc(code);
-
-            html += `
-                <div class="daily-forecast-item d-flex align-items-center justify-content-between p-3 mb-2 rounded-2">
-                    <div class="d-flex align-items-center gap-3" style="min-width: 140px;">
-                        <i class="${iconClass} fs-4"></i>
-                        <div>
-                            <strong class="text-white small d-block">${dayLabel}</strong>
-                            <span class="text-tertiary x-small">${dateLabel}</span>
-                        </div>
-                    </div>
-
-                    <div class="text-secondary small d-none d-md-block flex-grow-1 px-3 text-truncate">
-                        ${desc}
-                    </div>
-
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="d-flex align-items-center gap-1 text-blue x-small" style="min-width: 55px;">
-                            <i class="bi bi-droplet-fill"></i>
-                            <span class="mono-num">${prob}%</span>
-                        </div>
-                        <div class="d-flex align-items-center gap-2 mono-num small" style="min-width: 110px; justify-content: flex-end;">
-                            <span class="text-tertiary">${I18n.formatTemp(minT)}</span>
-                            <div class="daily-temp-bar-wrapper">
-                                <div class="daily-temp-bar-fill"></div>
-                            </div>
-                            <strong class="text-white">${I18n.formatTemp(maxT)}</strong>
-                        </div>
-                    </div>
-                </div>
-            `;
+            const dObj = new Date(times[i] + 'T00:00:00');
+            const dName = (i === 0) ? (isId ? 'Hari Ini' : 'Today') : (i === 1) ? (isId ? 'Besok' : 'Tomorrow') : dayNames[dObj.getDay()];
+            if ((probs[i] || 0) >= 40) rainDays.push(dName);
+            if (minTemps[i] !== undefined && minTemps[i] < allMin) allMin = minTemps[i];
+            if (maxTemps[i] !== undefined && maxTemps[i] > allMax) allMax = maxTemps[i];
         }
 
-        container.innerHTML = html;
+        if (summaryContainer && allMin !== Infinity && allMax !== -Infinity) {
+            let summaryText = isId
+                ? `<strong>Analisis Tren 7 Hari:</strong> Rentang suhu mingguan diperkirakan antara <strong>${I18n.formatTemp(allMin)} - ${I18n.formatTemp(allMax)}</strong>. `
+                : `<strong>7-Day Outlook:</strong> Weekly temperatures expected between <strong>${I18n.formatTemp(allMin)} - ${I18n.formatTemp(allMax)}</strong>. `;
+
+            if (rainDays.length > 0) {
+                summaryText += isId
+                    ? `Peluang presipitasi hujan tinggi terpantau pada <strong>${rainDays.join(', ')}</strong>. Disarankan membawa payung saat bepergian.`
+                    : `Higher chance of rain expected on <strong>${rainDays.join(', ')}</strong>. Keep an umbrella ready.`;
+            } else {
+                summaryText += isId
+                    ? `Kondisi atmosfer cenderung stabil dengan potensi hujan rendah sepanjang minggu.`
+                    : `Atmospheric conditions remain mostly stable with low rain risk throughout the week.`;
+            }
+            summaryContainer.innerHTML = summaryText;
+        }
+
+        // 2. Render 7 Kartu Grid Responsif
+        if (gridContainer) {
+            let gridHtml = '';
+            for (let i = 0; i < count; i++) {
+                const dateObj = new Date(times[i] + 'T00:00:00');
+                let dayLabel = dayNames[dateObj.getDay()];
+                const isToday = i === 0;
+                if (i === 0) dayLabel = isId ? 'Hari Ini' : 'Today';
+                else if (i === 1) dayLabel = isId ? 'Besok' : 'Tomorrow';
+
+                const dateLabel = `${dateObj.getDate()} ${dateObj.toLocaleString(isId ? 'id-ID' : 'en-US', { month: 'short' })}`;
+                const code = codes[i] ?? 0;
+                const minT = minTemps[i] ?? 20;
+                const maxT = maxTemps[i] ?? 30;
+                const prob = probs[i] ?? 0;
+                const iconClass = I18n.getWeatherIcon(code, true);
+                const desc = I18n.getWeatherDesc(code);
+
+                gridHtml += `
+                    <div class="col">
+                        <div class="daily-card ${isToday ? 'is-today' : ''}">
+                            <div>
+                                <div class="daily-card-day">${dayLabel}</div>
+                                <div class="daily-card-date">${dateLabel}</div>
+                                <div class="my-2">
+                                    <i class="${iconClass} fs-2 text-yellow"></i>
+                                </div>
+                                <div class="daily-card-condition">${desc}</div>
+                            </div>
+                            <div class="mt-2 pt-2 border-top border-subtle">
+                                <div class="d-flex align-items-center justify-content-center gap-1 text-blue x-small mb-1">
+                                    <i class="bi bi-droplet-fill"></i>
+                                    <span class="mono-num fw-semibold">${prob}%</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mono-num x-small">
+                                    <span class="text-tertiary">${I18n.formatTemp(minT)}</span>
+                                    <strong class="text-white">${I18n.formatTemp(maxT)}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            gridContainer.innerHTML = gridHtml;
+        }
+
+        // 3. Render Daftar Rincian Harian
+        if (listContainer) {
+            let listHtml = '';
+            for (let i = 0; i < count; i++) {
+                const dateObj = new Date(times[i] + 'T00:00:00');
+                let dayLabel = dayNames[dateObj.getDay()];
+                if (i === 0) dayLabel = isId ? 'Hari Ini' : 'Today';
+                else if (i === 1) dayLabel = isId ? 'Besok' : 'Tomorrow';
+
+                const dateLabel = `${dateObj.getDate()} ${dateObj.toLocaleString(isId ? 'id-ID' : 'en-US', { month: 'long', year: 'numeric' })}`;
+                const code = codes[i] ?? 0;
+                const minT = minTemps[i] ?? 20;
+                const maxT = maxTemps[i] ?? 30;
+                const prob = probs[i] ?? 0;
+                const wind = winds[i] ? Math.round(winds[i]) : 10;
+                const uv = uvs[i] ? uvs[i].toFixed(1) : '-';
+                const iconClass = I18n.getWeatherIcon(code, true);
+                const desc = I18n.getWeatherDesc(code);
+
+                listHtml += `
+                    <div class="daily-forecast-item d-flex align-items-center justify-content-between p-3 rounded-2">
+                        <div class="d-flex align-items-center gap-3" style="min-width: 160px;">
+                            <i class="${iconClass} fs-3"></i>
+                            <div>
+                                <strong class="text-white small d-block">${dayLabel}</strong>
+                                <span class="text-tertiary x-small">${dateLabel}</span>
+                            </div>
+                        </div>
+
+                        <div class="text-secondary small d-none d-md-block flex-grow-1 px-3 text-truncate">
+                            ${desc}
+                        </div>
+
+                        <div class="d-flex align-items-center gap-3 flex-wrap justify-content-end">
+                            <div class="d-flex align-items-center gap-1 text-blue x-small" style="min-width: 55px;" title="Peluang Hujan">
+                                <i class="bi bi-droplet-fill"></i>
+                                <span class="mono-num fw-semibold">${prob}%</span>
+                            </div>
+                            <div class="d-none d-sm-flex align-items-center gap-1 text-tertiary x-small" style="min-width: 70px;" title="Angin Maksimal">
+                                <i class="bi bi-wind"></i>
+                                <span class="mono-num">${wind} km/j</span>
+                            </div>
+                            <div class="d-none d-lg-flex align-items-center gap-1 text-yellow x-small" style="min-width: 55px;" title="Indeks UV Maksimal">
+                                <i class="bi bi-sun"></i>
+                                <span class="mono-num">UV ${uv}</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 mono-num small" style="min-width: 120px; justify-content: flex-end;">
+                                <span class="text-tertiary">${I18n.formatTemp(minT)}</span>
+                                <div class="daily-temp-bar-wrapper">
+                                    <div class="daily-temp-bar-fill"></div>
+                                </div>
+                                <strong class="text-white">${I18n.formatTemp(maxT)}</strong>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            listContainer.innerHTML = listHtml;
+        }
     },
 
     // --- 10. RADAR INTERAKTIF WINDY DENGAN LAZY LOADING & PILIHAN OVERLAY ---
@@ -602,6 +694,14 @@ export const UI = {
         }
     },
 
+    bukaPrakiraanMingguan() {
+        const sectionDaily = document.getElementById('sectionDailyForecast');
+        this.setActiveNav('forecast');
+        if (sectionDaily) {
+            sectionDaily.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    },
+
     toggleRadarLayarPenuh() {
         const sectionPeta = document.getElementById('sectionPeta');
         if (!sectionPeta) return;
@@ -625,6 +725,11 @@ export const UI = {
 
         if (activeName === 'kondisi') {
             document.querySelectorAll('.nav-link-kondisi').forEach(el => {
+                el.classList.add('active');
+                el.setAttribute('aria-current', 'page');
+            });
+        } else if (activeName === 'forecast') {
+            document.querySelectorAll('.nav-link-forecast').forEach(el => {
                 el.classList.add('active');
                 el.setAttribute('aria-current', 'page');
             });

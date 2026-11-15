@@ -64,6 +64,9 @@
                 <button type="button" class="nav-item-link nav-link-kondisi active" onclick="bukaKondisiTerkini()" aria-label="Kondisi Terkini" aria-current="page">
                     <i class="bi bi-compass"></i> Kondisi Terkini
                 </button>
+                <button type="button" class="nav-item-link nav-link-forecast" onclick="bukaPrakiraanMingguan()" aria-label="Prakiraan Cuaca 7 Hari">
+                    <i class="bi bi-calendar-week"></i> Prakiraan 7 Hari
+                </button>
                 <button type="button" class="nav-item-link nav-link-radar" onclick="bukaPetaCuaca()" aria-label="Peta Radar Interaktif">
                     <i class="bi bi-map"></i> Peta Radar Interaktif
                 </button>
@@ -118,6 +121,9 @@
             <div class="d-flex flex-column gap-2">
                 <button type="button" class="nav-item-link nav-link-kondisi active py-2 text-start w-100" data-bs-dismiss="offcanvas" onclick="bukaKondisiTerkini()">
                     <i class="bi bi-compass me-2"></i> Kondisi Terkini
+                </button>
+                <button type="button" class="nav-item-link nav-link-forecast py-2 text-start w-100" data-bs-dismiss="offcanvas" onclick="bukaPrakiraanMingguan()">
+                    <i class="bi bi-calendar-week me-2"></i> Prakiraan 7 Hari
                 </button>
                 <button type="button" class="nav-item-link nav-link-radar py-2 text-start w-100" data-bs-dismiss="offcanvas" onclick="bukaPetaCuaca()">
                     <i class="bi bi-map me-2"></i> Peta Radar Interaktif
@@ -421,16 +427,30 @@
                 <div id="wadahPrakiraan" class="timeline-scroll-strip" tabindex="0" aria-label="Daftar prakiraan per jam"></div>
             </section>
 
-            <!-- 7-Day Forecast Section (Fitur Baru B.1) -->
+            <!-- 7-Day Forecast Section (Fitur Baru: Prakiraan Cuaca 7 Hari ke Depan) -->
             <section id="sectionDailyForecast" class="editorial-card mb-4" aria-label="Prakiraan Cuaca 7 Hari ke Depan">
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                     <div>
-                        <h6 class="text-white fw-bold mb-0" data-i18n="daily_forecast">Prakiraan 7 Hari ke Depan</h6>
+                        <h6 class="text-white fw-bold mb-0">
+                            <i class="bi bi-calendar-week text-blue me-2"></i><span data-i18n="daily_forecast">Prakiraan 7 Hari ke Depan</span>
+                        </h6>
                         <span class="text-tertiary x-small" data-i18n="daily_desc">Tren cuaca, rentang suhu, dan peluang hujan mingguan</span>
                     </div>
-                    <span class="badge bg-dark border border-secondary text-secondary x-small">7 Hari</span>
+                    <span class="badge bg-primary bg-opacity-25 text-blue border border-primary border-opacity-50 px-2 py-1 x-small fw-semibold">
+                        <i class="bi bi-graph-up me-1"></i> 7 Hari Outlook
+                    </span>
                 </div>
-                <div id="wadahPrakiraanMingguan" class="d-flex flex-column gap-2"></div>
+
+                <!-- Ringkasan Tren Mingguan -->
+                <div id="ringkasanMingguan" class="p-3 mb-3 rounded-2" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-color); font-size: 0.85rem; color: var(--text-secondary);">
+                    Memuat ringkasan tren cuaca mingguan...
+                </div>
+
+                <!-- 7 Kartu Prakiraan Harian (Grid Responsif) -->
+                <div id="wadahPrakiraanMingguan" class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-7 g-2 mb-3"></div>
+
+                <!-- Daftar Rincian Parameter Lengkap Harian -->
+                <div id="daftarRincianMingguan" class="d-flex flex-column gap-2 mt-2"></div>
             </section>
 
             <!-- Embedded Interactive Radar Frame (Windy dengan Pilihan Overlay & Lazy Load) -->
@@ -601,8 +621,8 @@
 
     <!-- Bootstrap Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Modular Application Script -->
-    <script type="module" src="js/app.js"></script>
+    <!-- Standalone Application Script (Berjalan di file://, localhost, dan Vercel) -->
+    <script src="script.js"></script>
 </body>
 
 </html>
