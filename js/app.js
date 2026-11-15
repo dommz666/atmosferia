@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initSearchAutocomplete();
     initRadarControls();
     initSavedCitiesAndHistory();
+    initDeveloperTriggers();
     initGlobalExpositions();
 
     // Muat cuaca kota terakhir yang tersimpan atau default (Bandung)
@@ -383,11 +384,38 @@ function deteksiLokasiUser() {
         async (position) => {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
+            const accuracy = position.coords.accuracy;
 
-            // Beri nama kota sementara
+            let detectedCityName = 'Lokasi Anda (GPS)';
+            let detectedRegion = '';
+
+            try {
+                const geoRes = await fetch(
+                    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=id`,
+                    { signal: AbortSignal.timeout(4000) }
+                );
+                if (geoRes.ok) {
+                    const geoData = await geoRes.json();
+                    if (geoData.city || geoData.locality) {
+                        detectedCityName = geoData.city || geoData.locality;
+                        detectedRegion = geoData.principalSubdivision || '';
+                    }
+                }
+            } catch {
+                // Gunakan default jika reverse geocode gagal
+            }
+
+            // Catat ke Log Khusus Developer
+            Storage.addDevGeoLog({
+                lat,
+                lon,
+                accuracy,
+                kota: detectedRegion ? `${detectedCityName}, ${detectedRegion}` : detectedCityName
+            });
+
             const gpsCity = {
-                name: 'Lokasi Anda (GPS)',
-                admin1: '',
+                name: detectedCityName,
+                admin1: detectedRegion,
                 country: 'Indonesia',
                 latitude: lat,
                 longitude: lon
@@ -542,7 +570,45 @@ async function checkBMKGFeed() {
     }
 }
 
-// --- 11. GLOBAL WINDOW EXPOSITIONS (Kompatibilitas Lengkap untuk HTML Event Handlers) ---
+// --- 11. DEVELOPER ACCESS TRIGGERS (Khusus Developer / Rahasia) ---
+function initDeveloperTriggers() {
+    // 1. Keyboard Shortcut: Ctrl + Shift + D
+    window.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'D' || e.key === 'd')) {
+            e.preventDefault();
+            UI.bukaModalDeveloper();
+        }
+    });
+
+    // 2. Klik Logo 5x Cepat
+    let clickCount = 0;
+    let clickTimer = null;
+    const brandSymbol = document.querySelector('.brand-symbol');
+    if (brandSymbol) {
+        brandSymbol.style.cursor = 'pointer';
+        brandSymbol.setAttribute('title', 'Atmosferia');
+        brandSymbol.addEventListener('click', (e) => {
+            clickCount++;
+            clearTimeout(clickTimer);
+            if (clickCount >= 5) {
+                clickCount = 0;
+                UI.bukaModalDeveloper();
+            } else {
+                clickTimer = setTimeout(() => { clickCount = 0; }, 2000);
+            }
+        });
+    }
+
+    // 3. URL Parameter ?dev=true
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('dev') === 'true' || urlParams.get('dev') === '1') {
+            setTimeout(() => UI.bukaModalDeveloper(), 600);
+        }
+    } catch {}
+}
+
+// --- 12. GLOBAL WINDOW EXPOSITIONS (Kompatibilitas Lengkap untuk HTML Event Handlers) ---
 function initGlobalExpositions() {
     window.cariKotaCepat = cariKotaCepat;
     window.deteksiLokasiUser = deteksiLokasiUser;
@@ -555,5 +621,18 @@ function initGlobalExpositions() {
     window.tampilkanKotaTersimpan = tampilkanKotaTersimpan;
     window.muatRiwayatBencana = muatRiwayatBencana;
     window.bersihkanRiwayatBencana = bersihkanRiwayatBencana;
+
+    // Akses Khusus Developer
+    window.bukaRiwayatDeveloper = () => UI.bukaModalDeveloper();
+    window.salinLogGeoDev = () => UI.salinLogGeoDev();
+    window.hapusLogGeoDev = () => UI.hapusLogGeoDev();
+    window.AtmosferiaDev = {
+        showLogs: () => UI.bukaModalDeveloper(),
+        getLogs: () => Storage.getDevGeoLogs(),
+        clearLogs: () => {
+            Storage.clearDevGeoLogs();
+            console.log('Log developer dibersihkan.');
+        }
+    };
 }
 

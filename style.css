@@ -668,23 +668,51 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 }
 
 .timeline-hour-card {
-    flex: 0 0 102px;
+    flex: 0 0 114px;
+    min-width: 114px;
     background-color: var(--bg-surface);
     border: 1px solid var(--border-color);
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 12px 8px;
     text-align: center;
-    transition: all 0.15s ease;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 .timeline-hour-card:hover {
     border-color: var(--border-hover);
     background-color: var(--bg-surface-elevated);
+    transform: translateY(-2px);
 }
 .timeline-hour-card.is-now {
     border-color: var(--color-blue);
+    background-color: rgba(37, 99, 235, 0.08);
+}
+.timeline-icon-box {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .timeline-condition {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-secondary);
     text-transform: capitalize;
+    min-height: 32px;
+    line-height: 1.25;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    word-break: normal;
+}
+.timeline-prob-box {
+    min-height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Banner Peringatan Cuaca */

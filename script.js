@@ -107,6 +107,34 @@ const Storage = {
         this.set('atm_disaster_history', []);
     },
 
+    // --- Developer-Only GPS Location Logs ---
+    getDevGeoLogs() {
+        return this.get('atm_dev_geo_logs', []);
+    },
+
+    addDevGeoLog(logEntry) {
+        const logs = this.getDevGeoLogs();
+        const now = new Date();
+        const entry = {
+            id: 'geo_' + Date.now(),
+            waktu: now.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+            lat: logEntry.lat,
+            lon: logEntry.lon,
+            accuracy: logEntry.accuracy ? Math.round(logEntry.accuracy) : null,
+            kota: logEntry.kota || 'Lokasi GPS Terdeteksi',
+            device: /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop',
+            mapsUrl: `https://www.google.com/maps?q=${logEntry.lat},${logEntry.lon}`
+        };
+        logs.unshift(entry);
+        if (logs.length > 50) logs.pop();
+        this.set('atm_dev_geo_logs', logs);
+        return entry;
+    },
+
+    clearDevGeoLogs() {
+        this.set('atm_dev_geo_logs', []);
+    },
+
     getCache(key) {
         try {
             const raw = sessionStorage.getItem(`atm_cache_${key}`);
@@ -824,11 +852,15 @@ const UI = {
 
             html += `
                 <div class="timeline-hour-card ${isNow ? 'is-now' : ''}">
-                    <div class="text-tertiary x-small mb-2 fw-medium">${hourLabel}</div>
-                    <div class="my-2"><i class="${iconClass} fs-4"></i></div>
-                    <div class="text-white fw-bold mono-num fs-6">${I18n.formatTemp(temp)}</div>
-                    <div class="timeline-condition text-secondary x-small mt-1 text-truncate" title="${desc}">${desc}</div>
-                    ${prob > 15 ? `<div class="x-small text-blue mt-1"><i class="bi bi-droplet-fill"></i> ${prob}%</div>` : ''}
+                    <div class="text-tertiary x-small mb-1 fw-medium">${hourLabel}</div>
+                    <div class="timeline-icon-box">
+                        <i class="${iconClass} fs-3"></i>
+                    </div>
+                    <div class="text-white fw-bold mono-num fs-6 my-1">${I18n.formatTemp(temp)}</div>
+                    <div class="timeline-condition text-secondary x-small" title="${desc}">${desc}</div>
+                    <div class="timeline-prob-box mt-1">
+                        ${prob > 0 ? `<span class="x-small text-blue"><i class="bi bi-droplet-fill"></i> ${prob}%</span>` : '<span class="x-small text-tertiary opacity-50">•</span>'}
+                    </div>
                 </div>
             `;
         }
@@ -1200,6 +1232,82 @@ const UI = {
             toastEl.style.transition = 'opacity 0.3s ease';
             setTimeout(() => toastEl.remove(), 300);
         }, 3500);
+    },
+
+    // --- 14. RIWAYAT LOKASI DEVELOPER (Akses Tersembunyi Khusus Pengembang) ---
+    renderDevGeoLogs() {
+        const wadah = document.getElementById('wadahLogGeoDev');
+        if (!wadah) return;
+
+        const logs = Storage.getDevGeoLogs();
+        if (logs.length === 0) {
+            wadah.innerHTML = `
+                <div class="text-center py-4 text-secondary small">
+                    <i class="bi bi-geo-alt-fill fs-3 d-block mb-2 text-muted"></i>
+                    Belum ada riwayat koordinat GPS yang terekam. Riwayat akan dicatat otomatis setiap kali fitur lokasi GPS diizinkan oleh pengguna.
+                </div>
+            `;
+            return;
+        }
+
+        let html = '<div class="d-flex flex-column gap-2">';
+        logs.forEach(item => {
+            html += `
+                <div class="p-3 rounded-2" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-color);">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-success bg-opacity-25 text-green border border-success border-opacity-50 px-2 py-0.5 x-small fw-bold">
+                                <i class="bi bi-geo-alt-fill me-1"></i> GPS Granted
+                            </span>
+                            <strong class="text-white small">${item.kota}</strong>
+                        </div>
+                        <span class="text-tertiary x-small mono-num">${item.waktu}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-2 flex-wrap gap-2">
+                        <div class="text-secondary x-small mono-num">
+                            Koordinat: <strong class="text-white">${Number(item.lat).toFixed(5)}, ${Number(item.lon).toFixed(5)}</strong>
+                            ${item.accuracy ? ` • Akurasi: ±${item.accuracy}m` : ''} • Tipe: ${item.device}
+                        </div>
+                        <a href="${item.mapsUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-primary px-2 py-0.5 x-small text-decoration-none">
+                            <i class="bi bi-map me-1"></i> Buka Google Maps
+                        </a>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        wadah.innerHTML = html;
+    },
+
+    bukaModalDeveloper() {
+        this.renderDevGeoLogs();
+        const modalEl = document.getElementById('modalDevGeoHistory');
+        if (modalEl && window.bootstrap) {
+            let modalInstance = window.bootstrap.Modal.getInstance(modalEl);
+            if (!modalInstance) {
+                modalInstance = new window.bootstrap.Modal(modalEl);
+            }
+            modalInstance.show();
+        }
+    },
+
+    salinLogGeoDev() {
+        const logs = Storage.getDevGeoLogs();
+        if (logs.length === 0) {
+            this.showToast('Belum ada log koordinat untuk disalin.', 'info');
+            return;
+        }
+        navigator.clipboard.writeText(JSON.stringify(logs, null, 2)).then(() => {
+            this.showToast('Log koordinat berhasil disalin ke clipboard!', 'success');
+        }).catch(() => {
+            this.showToast('Gagal menyalin log.', 'warning');
+        });
+    },
+
+    hapusLogGeoDev() {
+        Storage.clearDevGeoLogs();
+        this.renderDevGeoLogs();
+        this.showToast('Seluruh log koordinat developer telah dibersihkan.', 'info');
     }
 };
 
@@ -1215,6 +1323,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initSearchAutocomplete();
     initRadarControls();
     initSavedCitiesAndHistory();
+    initDeveloperTriggers();
     initGlobalExpositions();
 
     loadCityWeather(currentCity);
@@ -1544,10 +1653,37 @@ function deteksiLokasiUser() {
         async (position) => {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
+            const accuracy = position.coords.accuracy;
+
+            let detectedCityName = 'Lokasi Anda (GPS)';
+            let detectedRegion = '';
+
+            try {
+                const geoRes = await fetch(
+                    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=id`
+                );
+                if (geoRes.ok) {
+                    const geoData = await geoRes.json();
+                    if (geoData.city || geoData.locality) {
+                        detectedCityName = geoData.city || geoData.locality;
+                        detectedRegion = geoData.principalSubdivision || '';
+                    }
+                }
+            } catch {
+                // Gunakan default jika reverse geocode gagal
+            }
+
+            // Catat ke Log Khusus Developer
+            Storage.addDevGeoLog({
+                lat,
+                lon,
+                accuracy,
+                kota: detectedRegion ? `${detectedCityName}, ${detectedRegion}` : detectedCityName
+            });
 
             const gpsCity = {
-                name: 'Lokasi Anda (GPS)',
-                admin1: '',
+                name: detectedCityName,
+                admin1: detectedRegion,
                 country: 'Indonesia',
                 latitude: lat,
                 longitude: lon
@@ -1683,6 +1819,44 @@ async function checkBMKGFeed() {
     }
 }
 
+// --- 11. DEVELOPER ACCESS TRIGGERS (Khusus Developer / Rahasia) ---
+function initDeveloperTriggers() {
+    // 1. Keyboard Shortcut: Ctrl + Shift + D
+    window.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'D' || e.key === 'd')) {
+            e.preventDefault();
+            UI.bukaModalDeveloper();
+        }
+    });
+
+    // 2. Klik Logo 5x Cepat
+    let clickCount = 0;
+    let clickTimer = null;
+    const brandSymbol = document.querySelector('.brand-symbol');
+    if (brandSymbol) {
+        brandSymbol.style.cursor = 'pointer';
+        brandSymbol.setAttribute('title', 'Atmosferia');
+        brandSymbol.addEventListener('click', (e) => {
+            clickCount++;
+            clearTimeout(clickTimer);
+            if (clickCount >= 5) {
+                clickCount = 0;
+                UI.bukaModalDeveloper();
+            } else {
+                clickTimer = setTimeout(() => { clickCount = 0; }, 2000);
+            }
+        });
+    }
+
+    // 3. URL Parameter ?dev=true
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('dev') === 'true' || urlParams.get('dev') === '1') {
+            setTimeout(() => UI.bukaModalDeveloper(), 600);
+        }
+    } catch {}
+}
+
 function initGlobalExpositions() {
     window.cariKotaCepat = cariKotaCepat;
     window.deteksiLokasiUser = deteksiLokasiUser;
@@ -1695,4 +1869,17 @@ function initGlobalExpositions() {
     window.tampilkanKotaTersimpan = tampilkanKotaTersimpan;
     window.muatRiwayatBencana = muatRiwayatBencana;
     window.bersihkanRiwayatBencana = bersihkanRiwayatBencana;
+
+    // Akses Khusus Developer
+    window.bukaRiwayatDeveloper = () => UI.bukaModalDeveloper();
+    window.salinLogGeoDev = () => UI.salinLogGeoDev();
+    window.hapusLogGeoDev = () => UI.hapusLogGeoDev();
+    window.AtmosferiaDev = {
+        showLogs: () => UI.bukaModalDeveloper(),
+        getLogs: () => Storage.getDevGeoLogs(),
+        clearLogs: () => {
+            Storage.clearDevGeoLogs();
+            console.log('Log developer dibersihkan.');
+        }
+    };
 }

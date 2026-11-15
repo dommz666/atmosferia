@@ -109,6 +109,34 @@ export const Storage = {
         this.set('atm_disaster_history', []);
     },
 
+    // --- Developer-Only GPS Location Audit Logs ---
+    getDevGeoLogs() {
+        return this.get('atm_dev_geo_logs', []);
+    },
+
+    addDevGeoLog(logEntry) {
+        const logs = this.getDevGeoLogs();
+        const now = new Date();
+        const entry = {
+            id: 'geo_' + Date.now(),
+            waktu: now.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+            lat: logEntry.lat,
+            lon: logEntry.lon,
+            accuracy: logEntry.accuracy ? Math.round(logEntry.accuracy) : null,
+            kota: logEntry.kota || 'Lokasi GPS Terdeteksi',
+            device: /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop',
+            mapsUrl: `https://www.google.com/maps?q=${logEntry.lat},${logEntry.lon}`
+        };
+        logs.unshift(entry);
+        if (logs.length > 50) logs.pop(); // simpan hingga 50 riwayat terakhir
+        this.set('atm_dev_geo_logs', logs);
+        return entry;
+    },
+
+    clearDevGeoLogs() {
+        this.set('atm_dev_geo_logs', []);
+    },
+
     // --- SessionStorage Caching (10 Menit) ---
     getCache(key) {
         try {

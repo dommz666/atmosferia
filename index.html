@@ -619,6 +619,49 @@
         </div>
     </div>
 
+    <!-- Modal Riwayat Lokasi GPS Pengembang (Developer Access Only) -->
+    <div class="modal fade" id="modalDevGeoHistory" tabindex="-1" aria-labelledby="modalDevGeoTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content modal-editorial">
+                <div class="modal-header border-bottom border-subtle">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-primary bg-opacity-25 text-blue border border-primary border-opacity-50 px-2 py-1 x-small fw-bold">
+                            <i class="bi bi-code-slash me-1"></i> DEV CONSOLE
+                        </span>
+                        <h5 class="modal-title fw-bold fs-6 mb-0" id="modalDevGeoTitle">
+                            Log Riwayat Lokasi Pengguna (Audit GPS)
+                        </h5>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <span class="text-secondary small">
+                            Daftar titik koordinat GPS yang telah disetujui/diizinkan oleh pengguna:
+                        </span>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-outline-light px-3 py-1 x-small rounded-2" onclick="salinLogGeoDev()">
+                                <i class="bi bi-clipboard me-1"></i> Salin JSON
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger px-3 py-1 x-small rounded-2" onclick="hapusLogGeoDev()">
+                                <i class="bi bi-trash3 me-1"></i> Bersihkan Log
+                            </button>
+                        </div>
+                    </div>
+                    <div id="wadahLogGeoDev" style="max-height: 380px; overflow-y: auto;">
+                        <!-- Konten log lokasi dirender secara dinamis -->
+                    </div>
+                </div>
+                <div class="modal-footer border-top border-subtle d-flex justify-content-between">
+                    <span class="text-tertiary x-small">
+                        Akses Cepat Pengembang: Tekan <code>Ctrl + Shift + D</code> atau klik logo 5x
+                    </span>
+                    <button type="button" class="btn btn-sm btn-outline-light px-3 py-1 x-small rounded-2" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Standalone Application Script (Berjalan di file://, localhost, dan Vercel) -->
