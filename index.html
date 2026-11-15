@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atmosferia — Prakiraan Cuaca Indonesia</title>
+    <!-- Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Top Sticky Header -->
+    <header class="site-header mb-4">
+        <div class="container d-flex justify-content-between align-items-center">
+
+            <!-- Brand -->
+            <a href="index.html" class="d-flex align-items-center gap-2 text-decoration-none flex-shrink-0">
+                <div class="brand-symbol">
+                    <i class="bi bi-cloud-sun"></i>
+                </div>
+                <div class="d-flex flex-column justify-content-center">
+                    <span class="brand-text">Atmosferia</span>
+                    <span class="brand-tagline d-block" data-i18n="app_tagline">Prakiraan Cuaca Indonesia</span>
+                </div>
+            </a>
+
+            <!-- Desktop Links -->
+            <nav class="d-none d-lg-flex align-items-center site-nav">
+                <a href="index.html" class="nav-item-link active"><i class="bi bi-compass"></i> Kondisi Terkini</a>
+                <a href="#" class="nav-item-link" onclick="bukaPetaCuaca(); return false;"><i class="bi bi-map"></i>
+                    Peta Radar</a>
+                <a href="#" class="nav-item-link" data-bs-toggle="modal" data-bs-target="#modalSaved"
+                    onclick="tampilkanKotaTersimpan()"><i class="bi bi-bookmark"></i> Kota Tersimpan</a>
+                <a href="radar.php" class="nav-item-link"><i class="bi bi-radar"></i> Radar Satelit</a>
+                <a href="prakiraan-cuaca.php" class="nav-item-link"><i class="bi bi-broadcast"></i> Stasiun BMKG</a>
+                <a href="cuaca-buruk.php" class="nav-item-link"><i class="bi bi-shield-exclamation"></i> Siaga Cuaca</a>
+            </nav>
+
+            <!-- Unit & Language Switches + Mobile Toggle -->
+            <div class="d-flex align-items-center gap-2">
+                <!-- Unit Switcher -->
+                <div class="segmented-control" title="Pilih Satuan Suhu">
+                    <button id="unitC" class="segmented-btn active">°C</button>
+                    <button id="unitF" class="segmented-btn">°F</button>
+                </div>
+
+                <!-- Language Switcher -->
+                <div class="segmented-control" title="Pilih Bahasa">
+                    <button id="langId" class="segmented-btn active">ID</button>
+                    <button id="langEn" class="segmented-btn">EN</button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="btn-gps-action d-lg-none" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasNav" aria-label="Menu">
+                    <i class="bi bi-list fs-5"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Offcanvas Menu -->
+    <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasNav"
+        style="background: var(--surface-1); border-left: 1px solid var(--border-strong);">
+        <div class="offcanvas-header border-bottom border-subtle">
+            <div class="d-flex align-items-center gap-2">
+                <div class="brand-symbol"><i class="bi bi-cloud-sun"></i></div>
+                <span class="brand-text">Atmosferia</span>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column justify-content-between p-4">
+            <div class="d-flex flex-column gap-2">
+                <a href="index.html" class="nav-item-link active py-2"><i class="bi bi-compass me-2"></i> Kondisi
+                    Terkini</a>
+                <a href="#" class="nav-item-link py-2" data-bs-dismiss="offcanvas" onclick="bukaPetaCuaca()"><i
+                        class="bi bi-map me-2"></i> Peta Radar Interaktif</a>
+                <a href="#" class="nav-item-link py-2" data-bs-dismiss="offcanvas" data-bs-toggle="modal"
+                    data-bs-target="#modalSaved" onclick="tampilkanKotaTersimpan()"><i class="bi bi-bookmark me-2"></i>
+                    Kota Tersimpan</a>
+                <hr class="border-subtle my-2">
+                <span class="text-tertiary x-small fw-bold mb-1">Layanan Informasi</span>
+                <a href="radar.php" class="nav-item-link py-2"><i class="bi bi-radar me-2 text-blue"></i> Radar
+                    Satelit</a>
+                <a href="prakiraan-cuaca.php" class="nav-item-link py-2"><i class="bi bi-broadcast me-2 text-green"></i>
+                    Data Stasiun BMKG</a>
+                <a href="cuaca-buruk.php" class="nav-item-link py-2"><i
+                        class="bi bi-shield-exclamation me-2 text-red"></i> Siaga Cuaca Buruk</a>
+                <a href="topan.php" class="nav-item-link py-2"><i class="bi bi-hurricane me-2 text-white"></i> Siklon
+                    Tropis dan Topan</a>
+                <a href="video.php" class="nav-item-link py-2"><i class="bi bi-play-circle me-2 text-yellow"></i> Video
+                    Analisis Cuaca</a>
+            </div>
+            <div class="text-tertiary x-small pt-3 border-top border-subtle">
+                Portal Pemantauan Cuaca dan Iklim Indonesia.
+            </div>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+
+        <!-- Severe Weather Alert Banner (Muncul otomatis jika ada anomali) -->
+        <div id="bannerPeringatan" class="mb-4 d-none">
+            <div class="alert-strip d-flex align-items-center justify-content-between flex-wrap gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-exclamation-triangle-fill fs-3 text-red"></i>
+                    <div>
+                        <strong class="text-white d-block" id="judulPeringatan">Peringatan Dini Cuaca Ekstrem</strong>
+                        <span class="text-secondary small" id="pesanPeringatan">Terdeteksi anomali cuaca di wilayah
+                            pantauan.</span>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="cuaca-buruk.php" class="btn btn-sm btn-outline-danger px-3 py-1 x-small rounded-2">
+                        Panduan Siaga
+                    </a>
+                    <button class="btn btn-sm btn-outline-light px-3 py-1 x-small rounded-2" data-bs-toggle="modal"
+                        data-bs-target="#modalRiwayatBencana">
+                        Log Riwayat
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Bar Row -->
+        <div class="row align-items-center justify-content-between mb-3 gy-3">
+            <div class="col-md-5">
+                <h1 class="h4 text-white fw-bold mb-1">Kondisi Cuaca Saat Ini</h1>
+                <p class="text-secondary small mb-0">Pantau suhu, kelembapan, arah angin, dan radar cuaca terkini.</p>
+            </div>
+
+            <div class="col-md-6 col-lg-5">
+                <div class="search-wrapper">
+                    <i class="bi bi-search text-tertiary ms-2"></i>
+                    <input type="text" id="inputKota" class="search-input"
+                        placeholder="Cari nama kota (misal: Bandung, Jakarta, Denpasar)...">
+                    <button class="btn-gps-action me-1" type="button" id="btnGeo" title="Gunakan Lokasi GPS Anda">
+                        <i class="bi bi-crosshair"></i>
+                    </button>
+                    <button class="btn-search-action" type="button" id="btnCari" data-i18n="search_btn">Cari
+                        Kota</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Region Quick Tags -->
+        <div class="mb-4">
+            <div class="d-flex align-items-center flex-wrap gap-2">
+                <span class="text-tertiary x-small fw-semibold me-1" data-i18n="region_title">Pilihan Kota:</span>
+                <div class="region-bar">
+                    <button class="region-tag active" onclick="cariKotaCepat('Bandung')">Bandung</button>
+                    <button class="region-tag" onclick="cariKotaCepat('Jakarta')">Jakarta</button>
+                    <button class="region-tag" onclick="cariKotaCepat('Surabaya')">Surabaya</button>
+                    <button class="region-tag" onclick="cariKotaCepat('Medan')">Medan</button>
+                    <button class="region-tag" onclick="cariKotaCepat('Semarang')">Semarang</button>
+                    <button class="region-tag" onclick="cariKotaCepat('Yogyakarta')">Yogyakarta</button>
+                    <button class="region-tag" onclick="cariKotaCepat('Denpasar')">Denpasar</button>
+                    <button class="region-tag" onclick="cariKotaCepat('Makassar')">Makassar</button>
+                    <button class="region-tag" onclick="cariKotaCepat('Palembang')">Palembang</button>
+                    <button class="region-tag" onclick="cariKotaCepat('Balikpapan')">Balikpapan</button>
+                    <button class="region-tag" onclick="cariKotaCepat('Jayapura')">Jayapura</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Weather Dashboard -->
+        <div id="hasilCuaca" class="d-none">
+
+            <!-- Daily Editorial Briefing Box -->
+            <div class="editorial-brief-box mb-4">
+                <div class="brief-title" data-i18n="daily_briefing">Ringkasan dan Rekomendasi Hari Ini</div>
+                <p class="brief-text" id="ringkasanCuaca">Memuat ringkasan cuaca...</p>
+            </div>
+
+            <!-- Weather Details Grid -->
+            <div class="row g-3 mb-4">
+
+                <!-- Main Temperature Card -->
+                <div class="col-lg-6">
+                    <div class="editorial-card h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-geo-alt-fill text-blue"></i>
+                                        <h2 id="namaWilayah" class="h4 text-white fw-bold mb-0">Bandung</h2>
+                                    </div>
+                                    <div class="d-flex flex-wrap align-items-center gap-2 mt-1">
+                                        <span id="waktuUpdate" class="text-tertiary x-small">Pembaruan data baru
+                                            saja</span>
+                                        <span class="text-muted x-small d-none d-sm-inline">•</span>
+                                        <span id="suasanaKota" class="weather-theme-badge"><i
+                                                class="bi bi-clock me-1"></i> Waktu Lokal: --:--</span>
+                                    </div>
+                                </div>
+                                <button class="btn-gps-action py-1 px-2" onclick="simpanKotaAktif()"
+                                    title="Simpan ke Kota Favorit">
+                                    <i class="bi bi-bookmark-plus"></i>
+                                </button>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center my-3">
+                                <div>
+                                    <div class="main-temp-number mono-num" id="suhuCuaca">24°</div>
+                                    <div class="weather-condition-text" id="deskripsiCuaca">Cerah Berawan</div>
+                                    <span class="text-secondary small" id="terasaSeperti">Terasa seperti 25°C</span>
+                                </div>
+                                <div class="pe-3">
+                                    <i id="ikonCuaca" class="bi bi-cloud-sun display-3 text-yellow"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Spectrum Min-Max Bar -->
+                        <div class="temp-spectrum-container">
+                            <div class="temp-spectrum-labels">
+                                <span><span data-i18n="min">Min</span>: <strong id="suhuMin"
+                                        class="text-white mono-num">20°C</strong></span>
+                                <span class="text-tertiary">Rentang Suhu Hari Ini</span>
+                                <span><span data-i18n="max">Maks</span>: <strong id="suhuMax"
+                                        class="text-white mono-num">29°C</strong></span>
+                            </div>
+                            <div class="temp-spectrum-track">
+                                <div id="tempFillBar" class="temp-spectrum-fill" style="width: 55%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4 Atmospheric Parameter Stations -->
+                <div class="col-lg-6">
+                    <div class="row g-3 h-100">
+
+                        <!-- 1. Humidity Station -->
+                        <div class="col-sm-6">
+                            <div class="metric-box">
+                                <div>
+                                    <div class="metric-header">
+                                        <span data-i18n="humidity_title">Kelembapan Udara</span>
+                                        <i class="bi bi-droplet text-blue"></i>
+                                    </div>
+                                    <div class="metric-val mono-num" id="kelembapan">75%</div>
+                                </div>
+                                <div class="mt-2">
+                                    <span id="badgeKenyamanan" class="metric-badge badge-comfort-humid">Tropis
+                                        Ideal</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Wind & Compass Station -->
+                        <div class="col-sm-6">
+                            <div class="metric-box">
+                                <div>
+                                    <div class="metric-header">
+                                        <span data-i18n="wind_title">Angin Permukaan</span>
+                                        <i class="bi bi-wind text-blue"></i>
+                                    </div>
+                                    <div class="metric-val mono-num" id="kecepatanAngin">12 km/j</div>
+                                </div>
+                                <div class="compass-widget mt-2">
+                                    <div class="compass-dial" title="Jarum Kompas Arah Angin">
+                                        <div class="compass-needle" id="compassNeedle"></div>
+                                    </div>
+                                    <span class="text-secondary x-small" id="arahAnginTeks">Tenggara (135°)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Solar & Daylight Station -->
+                        <div class="col-sm-6">
+                            <div class="metric-box">
+                                <div>
+                                    <div class="metric-header">
+                                        <span data-i18n="sun_title">Matahari dan Siklus Siang</span>
+                                        <i class="bi bi-sun text-yellow"></i>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div>
+                                            <span class="text-tertiary x-small d-block">Terbit</span>
+                                            <strong class="text-white mono-num fs-6" id="waktuTerbit">05:42</strong>
+                                        </div>
+                                        <div class="vr bg-secondary opacity-25" style="height: 25px;"></div>
+                                        <div>
+                                            <span class="text-tertiary x-small d-block">Terbenam</span>
+                                            <strong class="text-white mono-num fs-6" id="waktuTerbenam">17:58</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-2 text-tertiary x-small" id="siklusMatahariTeks">Matahari di atas horizon
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Visibility & Barometric Pressure -->
+                        <div class="col-sm-6">
+                            <div class="metric-box">
+                                <div>
+                                    <div class="metric-header">
+                                        <span data-i18n="vis_press_title">Jarak Pandang dan Tekanan</span>
+                                        <i class="bi bi-speedometer2 text-secondary"></i>
+                                    </div>
+                                    <div class="metric-val mono-num" id="jarakPandang">10.0 km</div>
+                                </div>
+                                <div class="mt-2 text-tertiary x-small">
+                                    Tekanan: <strong class="text-white mono-num" id="tekananUdara">1013 hPa</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Hourly Forecast Strip -->
+            <div class="editorial-card mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h6 class="text-white fw-bold mb-0" data-i18n="hourly_forecast">Prakiraan Cuaca per Jam</h6>
+                        <span class="text-tertiary x-small" data-i18n="hourly_desc">Pergerakan suhu dan kondisi tiap 3
+                            jam</span>
+                    </div>
+                    <button class="btn btn-sm btn-outline-light px-3 py-1 x-small rounded-2" onclick="bukaPetaCuaca()">
+                        <i class="bi bi-map me-1"></i> <span data-i18n="btn_view_radar">Buka Radar Peta</span>
+                    </button>
+                </div>
+                <div id="wadahPrakiraan" class="timeline-scroll-strip"></div>
+            </div>
+
+            <!-- Embedded Interactive Radar Frame -->
+            <div id="sectionPeta" class="editorial-card mb-4 d-none">
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <div>
+                        <h5 class="text-white fw-bold mb-0"><i class="bi bi-radar text-blue me-2"></i>Radar Satelit dan
+                            Dinamika Angin</h5>
+                        <span class="text-tertiary x-small">Peta numerik interaktif berpusat pada wilayah aktif</span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="radar.php" class="btn btn-sm btn-outline-light px-3 py-1 x-small rounded-2">
+                            <i class="bi bi-arrows-fullscreen me-1"></i> Buka Layar Penuh
+                        </a>
+                        <button class="btn btn-sm btn-outline-secondary px-3 py-1 x-small rounded-2"
+                            onclick="tutupPeta()">
+                            Tutup
+                        </button>
+                    </div>
+                </div>
+                <div class="ratio ratio-16x9 rounded-3 overflow-hidden" style="border: 1px solid var(--border-subtle);">
+                    <iframe id="windyIframe"
+                        src="https://embed.windy.com/embed2.html?lat=-6.917&lon=107.619&zoom=8&level=surface&overlay=wind&menu=&message=&marker=true&pressure=&wind=map&metricWind=km%2Fh&metricTemp=%C2%B0C&radarRange=-1"
+                        frameborder="0"></iframe>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Section: Layanan Informasi & Menu Khusus -->
+        <div class="mt-4">
+            <div class="section-headline" data-i18n="menu_title">
+                Layanan dan Informasi Khusus
+            </div>
+
+            <div class="editorial-menu-grid">
+
+                <!-- 1. Radar Peta -->
+                <a href="radar.php" class="editorial-menu-card">
+                    <div>
+                        <div class="menu-symbol-box symbol-radar">
+                            <i class="bi bi-radar"></i>
+                        </div>
+                        <h6 class="menu-card-heading" data-i18n="radar_label">Radar Satelit Cuaca</h6>
+                        <p class="menu-card-summary" data-i18n="radar_desc">Pantauan langsung pergerakan awan konvektif,
+                            angin, dan hujan di Nusantara.</p>
+                    </div>
+                    <div class="menu-card-footer">
+                        <span data-i18n="view_link">Lihat Selengkapnya</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+                </a>
+
+                <!-- 2. Stasiun BMKG -->
+                <a href="prakiraan-cuaca.php" class="editorial-menu-card">
+                    <div>
+                        <div class="menu-symbol-box symbol-bmkg">
+                            <i class="bi bi-broadcast"></i>
+                        </div>
+                        <h6 class="menu-card-heading" data-i18n="bmkg_label">Stasiun Resmi BMKG</h6>
+                        <p class="menu-card-summary" data-i18n="bmkg_desc">Data prakiraan resmi tingkat kecamatan dan
+                            kelurahan BMKG.</p>
+                    </div>
+                    <div class="menu-card-footer">
+                        <span data-i18n="view_link">Lihat Selengkapnya</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+                </a>
+
+                <!-- 3. Siaga Cuaca Buruk -->
+                <a href="cuaca-buruk.php" class="editorial-menu-card">
+                    <div>
+                        <div class="menu-symbol-box symbol-alert">
+                            <i class="bi bi-shield-exclamation"></i>
+                        </div>
+                        <h6 class="menu-card-heading" data-i18n="alert_label">Siaga Cuaca Buruk</h6>
+                        <p class="menu-card-summary" data-i18n="alert_desc">Protokol darurat bencana hidrometeorologi
+                            dan kontak pertolongan.</p>
+                    </div>
+                    <div class="menu-card-footer">
+                        <span data-i18n="view_link">Lihat Selengkapnya</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+                </a>
+
+                <!-- 4. Siklon Tropis & Topan -->
+                <a href="topan.php" class="editorial-menu-card">
+                    <div>
+                        <div class="menu-symbol-box symbol-cyclone">
+                            <i class="bi bi-hurricane"></i>
+                        </div>
+                        <h6 class="menu-card-heading" data-i18n="cyclone_label">Siklon Tropis dan Topan</h6>
+                        <p class="menu-card-summary" data-i18n="cyclone_desc">Pemantauan bibit siklon di Samudera Hindia
+                            dan Pasifik.</p>
+                    </div>
+                    <div class="menu-card-footer">
+                        <span data-i18n="view_link">Lihat Selengkapnya</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+                </a>
+
+                <!-- 5. Video Meteorologi -->
+                <a href="video.php" class="editorial-menu-card">
+                    <div>
+                        <div class="menu-symbol-box symbol-video">
+                            <i class="bi bi-play-circle"></i>
+                        </div>
+                        <h6 class="menu-card-heading" data-i18n="video_label">Video Analisis BMKG</h6>
+                        <p class="menu-card-summary" data-i18n="video_desc">Laporan visual dinamika atmosfer dan edukasi
+                            kesiapsiagaan.</p>
+                    </div>
+                    <div class="menu-card-footer">
+                        <span data-i18n="view_link">Lihat Selengkapnya</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
+        <!-- Initial loading state placeholder -->
+        <div id="pesanInfo" class="text-center py-5"></div>
+
+    </div>
+
+    <!-- Modal Saved Locations -->
+    <div class="modal fade" id="modalSaved" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content modal-editorial">
+                <div class="modal-header border-bottom border-subtle">
+                    <h5 class="modal-title fw-bold fs-6"><i class="bi bi-bookmark text-blue me-2"></i><span
+                            data-i18n="saved_title">Daftar Kota Tersimpan</span></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-secondary small">Kota favorit Anda:</span>
+                        <button class="btn btn-sm btn-outline-light px-3 py-1 x-small rounded-2"
+                            onclick="simpanKotaAktif()">
+                            <i class="bi bi-plus me-1"></i> <span data-i18n="btn_save_city">Simpan Kota Ini</span>
+                        </button>
+                    </div>
+                    <div id="daftarKotaFavorit"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Log Riwayat Peringatan -->
+    <div class="modal fade" id="modalRiwayatBencana" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content modal-editorial">
+                <div class="modal-header border-bottom border-subtle">
+                    <h5 class="modal-title fw-bold fs-6"><i class="bi bi-clock-history text-red me-2"></i><span
+                            data-i18n="history_title">Log Peringatan Bencana</span></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-secondary small">Catatan riwayat peringatan cuaca yang terdeteksi:</p>
+                    <div id="wadahRiwayatBencana" style="max-height: 350px; overflow-y: auto;"></div>
+                </div>
+                <div class="modal-footer border-top border-subtle">
+                    <button type="button" class="btn btn-sm btn-outline-danger px-3 py-1 x-small rounded-2"
+                        onclick="bersihkanRiwayatBencana()" data-i18n="history_clear">Kosongkan Log</button>
+                    <button type="button" class="btn btn-sm btn-outline-light px-3 py-1 x-small rounded-2"
+                        data-bs-dismiss="modal" data-i18n="modal_close">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

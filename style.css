@@ -1,0 +1,760 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    /* Warna Dasar & Netral (Clean, Solid, Non-AI) */
+    --bg-main: #121214;
+    --bg-surface: #1a1a1e;
+    --bg-surface-elevated: #222228;
+    --bg-input: #161619;
+
+    --border-color: #2c2c32;
+    --border-hover: #3e3e46;
+    --border-active: #2563eb;
+
+    /* Warna Dasar Primer */
+    --color-blue: #2563eb;
+    --color-blue-hover: #1d4ed8;
+    --color-red: #dc2626;
+    --color-green: #16a34a;
+    --color-yellow: #eab308;
+
+    /* Tipografi Dasar */
+    --text-white: #ffffff;
+    --text-primary: #f4f4f5;
+    --text-secondary: #a1a1aa;
+    --text-muted: #71717a;
+}
+
+/* ==========================================================================
+   TEMA DINAMIS CUACA & WAKTU (Solid, Natural, Non-AI)
+   Mengubah nuansa atmosfer secara otomatis berdasarkan cuaca dan waktu kota
+   ========================================================================== */
+
+/* 1. Hujan di Siang Hari (Mendung, Sejuk, Agak Gelap/Redup) */
+body.theme-rain-day {
+    --bg-main: #11151a;
+    --bg-surface: #171d24;
+    --bg-surface-elevated: #202730;
+    --bg-input: #13181f;
+    --border-color: #26323f;
+    --border-hover: #374657;
+    --color-blue: #3b82f6;
+}
+
+/* 2. Hujan di Malam Hari (Gelap Basah & Tenang) */
+body.theme-rain-night {
+    --bg-main: #0b0e13;
+    --bg-surface: #12161d;
+    --bg-surface-elevated: #191f28;
+    --bg-input: #0e1218;
+    --border-color: #202834;
+    --border-hover: #303c4e;
+    --color-blue: #2563eb;
+}
+
+/* 3. Badai Petir di Siang Hari (Awan Tebal Gelap) */
+body.theme-storm-day {
+    --bg-main: #0f1217;
+    --bg-surface: #171a22;
+    --bg-surface-elevated: #1f232d;
+    --bg-input: #12151b;
+    --border-color: #292f3d;
+    --border-hover: #3a4254;
+    --color-blue: #60a5fa;
+}
+
+/* 4. Badai Petir di Malam Hari */
+body.theme-storm-night {
+    --bg-main: #090b0f;
+    --bg-surface: #101319;
+    --bg-surface-elevated: #181c25;
+    --bg-input: #0c0f14;
+    --border-color: #212632;
+    --border-hover: #31394a;
+}
+
+/* 5. Berawan di Siang Hari (Redup Teduh) */
+body.theme-clouds-day {
+    --bg-main: #141518;
+    --bg-surface: #1b1c21;
+    --bg-surface-elevated: #23252b;
+    --bg-input: #16171b;
+    --border-color: #2d2f36;
+    --border-hover: #3f414a;
+}
+
+/* 6. Berawan di Malam Hari */
+body.theme-clouds-night {
+    --bg-main: #0e0f12;
+    --bg-surface: #15161a;
+    --bg-surface-elevated: #1d1e23;
+    --bg-input: #111215;
+    --border-color: #27282e;
+    --border-hover: #373940;
+}
+
+/* 7. Pagi Hari Cerah (Fajar Bersih) */
+body.theme-clear-morning {
+    --bg-main: #12151b;
+    --bg-surface: #1a1e26;
+    --bg-surface-elevated: #222732;
+    --bg-input: #151820;
+    --border-color: #2b323f;
+    --border-hover: #3d4657;
+    --color-blue: #2563eb;
+}
+
+/* 8. Siang Hari Cerah */
+body.theme-clear-day {
+    --bg-main: #13161c;
+    --bg-surface: #1b2029;
+    --bg-surface-elevated: #232a35;
+    --bg-input: #171b22;
+    --border-color: #2b3442;
+    --border-hover: #3d495c;
+    --color-blue: #2563eb;
+}
+
+/* 9. Sore Hari / Senja Cerah (Sunset Hangat) */
+body.theme-clear-sunset {
+    --bg-main: #161311;
+    --bg-surface: #201b18;
+    --bg-surface-elevated: #2a2320;
+    --bg-input: #191513;
+    --border-color: #382d27;
+    --border-hover: #4e3f36;
+    --color-yellow: #f59e0b;
+}
+
+/* 10. Malam Hari Cerah (Langit Bersih Gelap) */
+body.theme-clear-night {
+    --bg-main: #0b0c0f;
+    --bg-surface: #131418;
+    --bg-surface-elevated: #1b1c21;
+    --bg-input: #101114;
+    --border-color: #23252a;
+    --border-hover: #32353c;
+}
+
+/* 11. Kabut di Siang Hari */
+body.theme-fog-day {
+    --bg-main: #131616;
+    --bg-surface: #1b1f1f;
+    --bg-surface-elevated: #232828;
+    --bg-input: #161919;
+    --border-color: #2c3232;
+    --border-hover: #3d4545;
+}
+
+/* 12. Kabut di Malam Hari */
+body.theme-fog-night {
+    --bg-main: #0c0e0e;
+    --bg-surface: #131616;
+    --bg-surface-elevated: #1a1e1e;
+    --bg-input: #0f1212;
+    --border-color: #212626;
+    --border-hover: #303737;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.site-header, .editorial-card, .metric-box, .timeline-hour-card, .search-wrapper, .segmented-control {
+    transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+}
+
+.weather-theme-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background-color: var(--bg-surface-elevated);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+.weather-theme-badge i {
+    font-size: 0.8rem;
+    color: var(--color-blue);
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+    color: var(--text-white);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.mono-num {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Header & Navigasi */
+.site-header {
+    background-color: var(--bg-surface);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.site-header .container,
+.site-header .container-fluid {
+    max-width: 1400px;
+}
+
+.brand-symbol {
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    background-color: var(--bg-surface-elevated);
+    border: 1px solid var(--border-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-blue);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.brand-text {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--text-white);
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.brand-tagline {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.site-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.nav-item-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1;
+    padding: 7px 11px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.nav-item-link i {
+    font-size: 0.9rem;
+    line-height: 1;
+    color: var(--text-muted);
+    transition: color 0.15s ease;
+}
+.nav-item-link:hover {
+    color: var(--text-white);
+    background-color: var(--bg-surface-elevated);
+    border-color: var(--border-color);
+}
+.nav-item-link:hover i {
+    color: var(--text-white);
+}
+.nav-item-link.active {
+    color: var(--text-white);
+    background-color: var(--bg-surface-elevated);
+    border-color: var(--border-color);
+    font-weight: 600;
+}
+.nav-item-link.active i {
+    color: var(--color-blue);
+}
+
+@media (min-width: 992px) and (max-width: 1240px) {
+    .site-nav {
+        gap: 2px;
+    }
+    .nav-item-link {
+        padding: 6px 8px;
+        font-size: 0.775rem;
+        gap: 4px;
+    }
+    .brand-tagline {
+        display: none !important;
+    }
+}
+
+/* Switcher Satuan & Bahasa */
+.segmented-control {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 2px;
+    height: 32px;
+    flex-shrink: 0;
+}
+.segmented-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0 9px;
+    height: 100%;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+.segmented-btn.active {
+    background-color: var(--color-blue);
+    color: #ffffff;
+}
+
+/* Kotak Pencarian */
+.search-wrapper {
+    display: flex;
+    align-items: center;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 4px 6px;
+    transition: border-color 0.15s ease;
+}
+.search-wrapper:focus-within {
+    border-color: var(--color-blue);
+}
+.search-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-white);
+    font-size: 0.88rem;
+    padding: 6px 10px;
+    width: 100%;
+}
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.btn-search-action {
+    background-color: var(--color-blue);
+    color: #ffffff;
+    border: none;
+    font-weight: 600;
+    font-size: 0.82rem;
+    padding: 7px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    white-space: nowrap;
+}
+.btn-search-action:hover {
+    background-color: var(--color-blue-hover);
+}
+
+.btn-gps-action {
+    background-color: var(--bg-surface-elevated);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    border-radius: 6px;
+    padding: 7px 11px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+}
+.btn-gps-action:hover {
+    color: var(--text-white);
+    border-color: var(--border-hover);
+}
+
+/* Tag Pilihan Wilayah Kota */
+.region-bar {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.region-tag {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.region-tag:hover {
+    color: var(--text-white);
+    border-color: var(--border-hover);
+    background-color: var(--bg-surface-elevated);
+}
+.region-tag.active {
+    background-color: var(--color-blue);
+    border-color: var(--color-blue);
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Kartu Editorial & Permukaan Data */
+.editorial-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 22px;
+}
+
+/* Kotak Ringkasan Editorial */
+.editorial-brief-box {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--color-blue);
+    border-radius: 8px;
+    padding: 16px 20px;
+}
+.brief-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--color-blue);
+    margin-bottom: 4px;
+}
+.brief-text {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    line-height: 1.5;
+    margin-bottom: 0;
+}
+
+/* Tampilan Angka Suhu Utama */
+.main-temp-number {
+    font-size: 4.5rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: var(--text-white);
+}
+
+.weather-condition-text {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-transform: capitalize;
+    margin-top: 4px;
+    margin-bottom: 6px;
+}
+
+/* Bar Rentang Suhu Min-Maks */
+.temp-spectrum-container {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-top: 14px;
+}
+.temp-spectrum-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+.temp-spectrum-track {
+    height: 6px;
+    background-color: var(--border-color);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+.temp-spectrum-fill {
+    height: 100%;
+    background-color: var(--color-blue);
+    border-radius: 4px;
+}
+
+/* Kotak Parameter Stasiun */
+.metric-box {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 18px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.metric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    margin-bottom: 8px;
+}
+
+.metric-val {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-white);
+    line-height: 1.2;
+}
+
+.metric-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background-color: var(--bg-surface-elevated);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+.badge-comfort-good { color: var(--color-green); border-color: var(--color-green); }
+.badge-comfort-humid { color: var(--color-yellow); border-color: var(--color-yellow); }
+.badge-comfort-high { color: var(--color-red); border-color: var(--color-red); }
+
+/* Dial Kompas Arah Angin */
+.compass-widget {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.compass-dial {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    flex-shrink: 0;
+}
+.compass-needle {
+    width: 2px;
+    height: 20px;
+    background-color: var(--color-blue);
+    position: absolute;
+    transform-origin: center center;
+    transition: transform 0.4s ease;
+}
+.compass-needle::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -3px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 6px solid var(--color-red);
+}
+
+/* Jalur Prakiraan Tiap Jam */
+.timeline-scroll-strip {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-hover) transparent;
+}
+.timeline-scroll-strip::-webkit-scrollbar {
+    height: 5px;
+}
+.timeline-scroll-strip::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 4px;
+}
+
+.timeline-hour-card {
+    flex: 0 0 102px;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 12px 8px;
+    text-align: center;
+    transition: all 0.15s ease;
+}
+.timeline-hour-card:hover {
+    border-color: var(--border-hover);
+    background-color: var(--bg-surface-elevated);
+}
+.timeline-hour-card.is-now {
+    border-color: var(--color-blue);
+}
+.timeline-condition {
+    text-transform: capitalize;
+}
+
+/* Banner Peringatan Cuaca */
+.alert-strip {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--color-red);
+    border-radius: 6px;
+    padding: 16px 20px;
+}
+
+/* Menu Grid Layanan Informasi */
+.section-headline {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+.section-headline::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background-color: var(--border-color);
+}
+
+.editorial-menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 12px;
+}
+
+.editorial-menu-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 18px;
+    text-decoration: none;
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.15s ease;
+}
+.editorial-menu-card:hover {
+    border-color: var(--border-hover);
+    background-color: var(--bg-surface-elevated);
+    color: var(--text-primary);
+}
+
+.menu-symbol-box {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    margin-bottom: 12px;
+    background-color: var(--bg-surface-elevated);
+    border: 1px solid var(--border-color);
+    color: var(--text-white);
+}
+
+.menu-card-heading {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text-white);
+    margin-bottom: 4px;
+}
+.menu-card-summary {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin-bottom: 12px;
+}
+.menu-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-blue);
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Toast Notifikasi Sederhana */
+.editorial-toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1090;
+}
+.editorial-toast {
+    background-color: var(--bg-surface-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-white);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    min-width: 280px;
+}
+
+/* Modal */
+.modal-editorial {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+}
+
+/* Utilities Dasar */
+.border-subtle { border-color: var(--border-color) !important; }
+.x-small { font-size: 0.75rem; }
+.text-tertiary { color: var(--text-muted) !important; }
+.text-blue { color: var(--color-blue) !important; }
+.text-red { color: var(--color-red) !important; }
+.text-green { color: var(--color-green) !important; }
+.text-yellow { color: var(--color-yellow) !important; }
+
+@media (max-width: 768px) {
+    .main-temp-number {
+        font-size: 3.5rem;
+    }
+    .editorial-menu-grid {
+        grid-template-columns: 1fr;
+    }
+    .editorial-card {
+        padding: 16px;
+    }
+}
