@@ -509,6 +509,7 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 .search-input {
     flex: 1 1 auto;
     min-width: 0;
+    width: 0;
     background: transparent !important;
     border: none !important;
     outline: none !important;
@@ -517,8 +518,8 @@ h1, h2, h3, h4, h5, h6, .font-heading {
     appearance: none;
     color: var(--text-white);
     font-size: 0.88rem;
-    padding: 6px 10px;
-    width: 100%;
+    padding: 6px 8px;
+    margin: 0 !important;
 }
 .search-input:focus,
 .search-input:focus-visible,
@@ -1147,7 +1148,8 @@ input.search-input:focus-visible {
 }
 
 /* 5. Aksesibilitas: Keyboard Focus Outline (WCAG AA) */
-:focus-visible:not(input):not(textarea):not(select):not(.search-input) {
+a:focus-visible,
+button:focus-visible:not(.btn-search-action):not(.btn-gps-action):not(.segmented-btn):not(.nav-item-link) {
     outline: 2px solid var(--color-blue);
     outline-offset: 2px;
 }
