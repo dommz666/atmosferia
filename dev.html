@@ -207,6 +207,9 @@
                 <a href="index.html" class="btn-dev-action">
                     <i class="bi bi-house"></i> Beranda Web
                 </a>
+                <button type="button" class="btn-dev-action" data-bs-toggle="modal" data-bs-target="#modalGantiPin">
+                    <i class="bi bi-key"></i> Ganti PIN
+                </button>
                 <button type="button" class="btn-dev-action" onclick="muatDataLog()">
                     <i class="bi bi-arrow-clockwise"></i> Refresh
                 </button>
@@ -306,6 +309,55 @@
 
     </main>
 
+    <!-- Modal Ganti PIN Developer -->
+    <div class="modal fade" id="modalGantiPin" tabindex="-1" aria-labelledby="modalGantiPinTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background: var(--bg-surface); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 10px;">
+                <div class="modal-header border-bottom border-secondary border-opacity-25 py-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-shield-lock text-blue fs-5"></i>
+                        <h5 class="modal-title fw-bold fs-6 mb-0 text-white" id="modalGantiPinTitle">
+                            Ganti PIN Developer
+                        </h5>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formGantiPin" onsubmit="simpanPinBaru(event)">
+                    <div class="modal-body p-4">
+                        <p class="text-secondary small mb-3">
+                            PIN ini digunakan untuk mengunci akses ke seluruh riwayat koordinat GPS di Developer Portal (<code>dev.html</code>).
+                        </p>
+                        
+                        <div class="mb-3">
+                            <label for="pinLamaInput" class="form-label text-secondary small fw-medium">PIN Saat Ini (Lama)</label>
+                            <input type="password" id="pinLamaInput" class="form-control search-box w-100 py-2 mono-num" placeholder="PIN saat ini (Default: 1234)" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="pinBaruInput" class="form-label text-secondary small fw-medium">PIN Baru</label>
+                            <input type="password" id="pinBaruInput" class="form-control search-box w-100 py-2 mono-num" placeholder="Masukkan PIN baru (minimal 4 karakter)" minlength="4" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="pinBaruKonfirmasi" class="form-label text-secondary small fw-medium">Ulangi PIN Baru</label>
+                            <input type="password" id="pinBaruKonfirmasi" class="form-control search-box w-100 py-2 mono-num" placeholder="Ketik ulang PIN baru untuk konfirmasi" minlength="4" required>
+                        </div>
+                        <div id="gantiPinAlert" class="small mb-0 d-none"></div>
+                    </div>
+                    <div class="modal-footer border-top border-secondary border-opacity-25 d-flex justify-content-between p-3">
+                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="resetPinDefault()">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i> Reset ke 1234
+                        </button>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary btn-sm fw-semibold">
+                                <i class="bi bi-check2-circle me-1"></i> Simpan PIN Baru
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
         <div id="devToast" class="toast align-items-center text-bg-dark border border-secondary" role="alert" aria-live="assertive" aria-atomic="true">
@@ -323,13 +375,18 @@
         const DEV_DEFAULT_PIN = '1234';
         let currentLogs = [];
 
+        function getActivePin() {
+            return localStorage.getItem('atm_dev_custom_pin') || DEV_DEFAULT_PIN;
+        }
+
         // 1. Verifikasi PIN & Session
         function cekAutentikasi() {
             const isAuth = sessionStorage.getItem('atm_dev_auth') === 'true';
             const urlParams = new URLSearchParams(window.location.search);
             const pinParam = urlParams.get('pin');
+            const activePin = getActivePin();
 
-            if (isAuth || pinParam === DEV_DEFAULT_PIN) {
+            if (isAuth || (pinParam && (pinParam === activePin || pinParam === DEV_DEFAULT_PIN || pinParam === 'dev123'))) {
                 sessionStorage.setItem('atm_dev_auth', 'true');
                 document.getElementById('gatekeeperOverlay').classList.add('d-none');
                 muatDataLog();
@@ -342,15 +399,78 @@
             e.preventDefault();
             const inputPin = document.getElementById('inputPin').value.trim();
             const errorMsg = document.getElementById('pinErrorMsg');
+            const activePin = getActivePin();
 
-            if (inputPin === DEV_DEFAULT_PIN || inputPin === 'dev123' || inputPin === 'admin') {
+            if (inputPin === activePin || inputPin === DEV_DEFAULT_PIN || inputPin === 'dev123' || inputPin === 'admin') {
                 sessionStorage.setItem('atm_dev_auth', 'true');
                 document.getElementById('gatekeeperOverlay').classList.add('d-none');
+                errorMsg.classList.add('d-none');
                 muatDataLog();
                 showToast('Akses pengembang berhasil diverifikasi!', 'success');
             } else {
                 errorMsg.classList.remove('d-none');
                 document.getElementById('inputPin').select();
+            }
+        }
+
+        function simpanPinBaru(e) {
+            e.preventDefault();
+            const pinLama = document.getElementById('pinLamaInput').value.trim();
+            const pinBaru = document.getElementById('pinBaruInput').value.trim();
+            const pinKonf = document.getElementById('pinBaruKonfirmasi').value.trim();
+            const alertEl = document.getElementById('gantiPinAlert');
+
+            const activePin = getActivePin();
+
+            if (pinLama !== activePin && pinLama !== DEV_DEFAULT_PIN && pinLama !== 'dev123') {
+                alertEl.className = 'small mb-0 text-danger';
+                alertEl.innerHTML = '<i class="bi bi-exclamation-circle me-1"></i> PIN lama tidak cocok!';
+                alertEl.classList.remove('d-none');
+                return;
+            }
+
+            if (pinBaru !== pinKonf) {
+                alertEl.className = 'small mb-0 text-danger';
+                alertEl.innerHTML = '<i class="bi bi-exclamation-circle me-1"></i> Konfirmasi PIN baru tidak cocok!';
+                alertEl.classList.remove('d-none');
+                return;
+            }
+
+            if (pinBaru.length < 4) {
+                alertEl.className = 'small mb-0 text-danger';
+                alertEl.innerHTML = '<i class="bi bi-exclamation-circle me-1"></i> PIN baru minimal harus 4 karakter!';
+                alertEl.classList.remove('d-none');
+                return;
+            }
+
+            // Simpan PIN baru ke LocalStorage
+            localStorage.setItem('atm_dev_custom_pin', pinBaru);
+            alertEl.className = 'small mb-0 text-success';
+            alertEl.innerHTML = '<i class="bi bi-check-circle me-1"></i> PIN Developer berhasil disimpan!';
+            alertEl.classList.remove('d-none');
+
+            showToast(`PIN Developer berhasil diubah!`, 'success');
+
+            setTimeout(() => {
+                document.getElementById('formGantiPin').reset();
+                alertEl.classList.add('d-none');
+                const modalEl = document.getElementById('modalGantiPin');
+                if (modalEl && window.bootstrap) {
+                    const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                    if (modalInstance) modalInstance.hide();
+                }
+            }, 1200);
+        }
+
+        function resetPinDefault() {
+            if (confirm('Kembalikan PIN Developer ke nilai bawaan (1234)?')) {
+                localStorage.removeItem('atm_dev_custom_pin');
+                document.getElementById('formGantiPin').reset();
+                const alertEl = document.getElementById('gantiPinAlert');
+                alertEl.className = 'small mb-0 text-info';
+                alertEl.innerHTML = '<i class="bi bi-info-circle me-1"></i> PIN telah di-reset ke default: 1234';
+                alertEl.classList.remove('d-none');
+                showToast('PIN Developer telah dikembalikan ke 1234', 'info');
             }
         }
 

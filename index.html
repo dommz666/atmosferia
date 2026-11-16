@@ -39,7 +39,7 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=20261116-search-focus-2">
 </head>
 
 <body>
@@ -652,11 +652,16 @@
                         <!-- Konten log lokasi dirender secara dinamis -->
                     </div>
                 </div>
-                <div class="modal-footer border-top border-subtle d-flex justify-content-between">
+                <div class="modal-footer border-top border-subtle d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <span class="text-tertiary x-small">
                         Akses Cepat Pengembang: Tekan <code>Ctrl + Shift + D</code> atau klik logo 5x
                     </span>
-                    <button type="button" class="btn btn-sm btn-outline-light px-3 py-1 x-small rounded-2" data-bs-dismiss="modal">Tutup</button>
+                    <div class="d-flex gap-2">
+                        <a href="dev.html" target="_blank" class="btn btn-sm btn-outline-primary px-3 py-1 x-small rounded-2 text-decoration-none">
+                            <i class="bi bi-box-arrow-up-right me-1"></i> Dashboard Lengkap (dev.html)
+                        </a>
+                        <button type="button" class="btn btn-sm btn-outline-light px-3 py-1 x-small rounded-2" data-bs-dismiss="modal">Tutup</button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -69,8 +69,14 @@ function applyThemeMode(mode) {
 
     document.body.classList.toggle('light-mode', useLight);
 
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+        metaTheme.setAttribute('content', useLight ? '#f8fafc' : '#121214');
+    }
+
     if (btnThemeToggle) {
         btnThemeToggle.setAttribute('aria-label', useLight ? 'Beralih ke mode gelap' : 'Beralih ke mode terang');
+        btnThemeToggle.setAttribute('title', useLight ? 'Beralih ke mode gelap' : 'Beralih ke mode terang');
         btnThemeToggle.innerHTML = useLight ? '<i class="bi bi-moon-stars"></i>' : '<i class="bi bi-sun"></i>';
     }
 }

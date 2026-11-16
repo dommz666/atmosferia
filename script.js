@@ -1280,6 +1280,21 @@ const UI = {
     },
 
     bukaModalDeveloper() {
+        const isAuth = sessionStorage.getItem('atm_dev_auth') === 'true';
+        const activePin = localStorage.getItem('atm_dev_custom_pin') || '1234';
+
+        if (!isAuth) {
+            const inputPin = window.prompt('🔒 AKSES KHUSUS PENGEMBANG\nMasukkan PIN Developer (Default: 1234):');
+            if (inputPin === null) return;
+            if (inputPin.trim() === activePin || inputPin.trim() === '1234' || inputPin.trim() === 'dev123' || inputPin.trim() === 'admin') {
+                sessionStorage.setItem('atm_dev_auth', 'true');
+                this.showToast('Autentikasi Pengembang berhasil!', 'success');
+            } else {
+                alert('PIN Pengembang salah! Akses ditolak.');
+                return;
+            }
+        }
+
         this.renderDevGeoLogs();
         const modalEl = document.getElementById('modalDevGeoHistory');
         if (modalEl && window.bootstrap) {
@@ -1363,8 +1378,14 @@ function applyThemeMode(mode) {
 
     document.body.classList.toggle('light-mode', useLight);
 
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+        metaTheme.setAttribute('content', useLight ? '#f8fafc' : '#121214');
+    }
+
     if (btnThemeToggle) {
         btnThemeToggle.setAttribute('aria-label', useLight ? 'Beralih ke mode gelap' : 'Beralih ke mode terang');
+        btnThemeToggle.setAttribute('title', useLight ? 'Beralih ke mode gelap' : 'Beralih ke mode terang');
         btnThemeToggle.innerHTML = useLight ? '<i class="bi bi-moon-stars"></i>' : '<i class="bi bi-sun"></i>';
     }
 }

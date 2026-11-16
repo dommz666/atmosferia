@@ -26,40 +26,12 @@
 }
 
 /* ==========================================================================
-   MODE TERANG (LIGHT MODE)
-   ========================================================================== */
-body.light-mode {
-    --bg-main: #f8fafc;
-    --bg-surface: #ffffff;
-    --bg-surface-elevated: #f1f5f9;
-    --bg-input: #f8fafc;
-
-    --border-color: #e2e8f0;
-    --border-hover: #cbd5e1;
-    --border-active: #2563eb;
-
-    --text-white: #0f172a;
-    --text-primary: #1e293b;
-    --text-secondary: #475569;
-    --text-muted: #64748b;
-}
-
-body.light-mode .btn-close-white {
-    filter: invert(1) grayscale(100%) brightness(20%);
-}
-
-body.light-mode .text-bg-dark {
-    background-color: var(--bg-surface) !important;
-    color: var(--text-primary) !important;
-}
-
-/* ==========================================================================
    TEMA DINAMIS CUACA & WAKTU (Solid, Natural, Non-AI)
-   Mengubah nuansa atmosfer secara otomatis berdasarkan cuaca dan waktu kota
+   Hanya aktif saat Mode Gelap (Default) agar nuansa atmosfer cuaca terlihat
    ========================================================================== */
 
 /* 1. Hujan di Siang Hari (Mendung, Sejuk, Agak Gelap/Redup) */
-body.theme-rain-day {
+body:not(.light-mode).theme-rain-day {
     --bg-main: #11151a;
     --bg-surface: #171d24;
     --bg-surface-elevated: #202730;
@@ -70,7 +42,7 @@ body.theme-rain-day {
 }
 
 /* 2. Hujan di Malam Hari (Gelap Basah & Tenang) */
-body.theme-rain-night {
+body:not(.light-mode).theme-rain-night {
     --bg-main: #0b0e13;
     --bg-surface: #12161d;
     --bg-surface-elevated: #191f28;
@@ -81,7 +53,7 @@ body.theme-rain-night {
 }
 
 /* 3. Badai Petir di Siang Hari (Awan Tebal Gelap) */
-body.theme-storm-day {
+body:not(.light-mode).theme-storm-day {
     --bg-main: #0f1217;
     --bg-surface: #171a22;
     --bg-surface-elevated: #1f232d;
@@ -92,7 +64,7 @@ body.theme-storm-day {
 }
 
 /* 4. Badai Petir di Malam Hari */
-body.theme-storm-night {
+body:not(.light-mode).theme-storm-night {
     --bg-main: #090b0f;
     --bg-surface: #101319;
     --bg-surface-elevated: #181c25;
@@ -102,7 +74,7 @@ body.theme-storm-night {
 }
 
 /* 5. Berawan di Siang Hari (Redup Teduh) */
-body.theme-clouds-day {
+body:not(.light-mode).theme-clouds-day {
     --bg-main: #141518;
     --bg-surface: #1b1c21;
     --bg-surface-elevated: #23252b;
@@ -112,7 +84,7 @@ body.theme-clouds-day {
 }
 
 /* 6. Berawan di Malam Hari */
-body.theme-clouds-night {
+body:not(.light-mode).theme-clouds-night {
     --bg-main: #0e0f12;
     --bg-surface: #15161a;
     --bg-surface-elevated: #1d1e23;
@@ -122,7 +94,7 @@ body.theme-clouds-night {
 }
 
 /* 7. Pagi Hari Cerah (Fajar Bersih) */
-body.theme-clear-morning {
+body:not(.light-mode).theme-clear-morning {
     --bg-main: #12151b;
     --bg-surface: #1a1e26;
     --bg-surface-elevated: #222732;
@@ -133,7 +105,7 @@ body.theme-clear-morning {
 }
 
 /* 8. Siang Hari Cerah */
-body.theme-clear-day {
+body:not(.light-mode).theme-clear-day {
     --bg-main: #13161c;
     --bg-surface: #1b2029;
     --bg-surface-elevated: #232a35;
@@ -144,7 +116,7 @@ body.theme-clear-day {
 }
 
 /* 9. Sore Hari / Senja Cerah (Sunset Hangat) */
-body.theme-clear-sunset {
+body:not(.light-mode).theme-clear-sunset {
     --bg-main: #161311;
     --bg-surface: #201b18;
     --bg-surface-elevated: #2a2320;
@@ -155,7 +127,7 @@ body.theme-clear-sunset {
 }
 
 /* 10. Malam Hari Cerah (Langit Bersih Gelap) */
-body.theme-clear-night {
+body:not(.light-mode).theme-clear-night {
     --bg-main: #0b0c0f;
     --bg-surface: #131418;
     --bg-surface-elevated: #1b1c21;
@@ -165,7 +137,7 @@ body.theme-clear-night {
 }
 
 /* 11. Kabut di Siang Hari */
-body.theme-fog-day {
+body:not(.light-mode).theme-fog-day {
     --bg-main: #131616;
     --bg-surface: #1b1f1f;
     --bg-surface-elevated: #232828;
@@ -175,13 +147,150 @@ body.theme-fog-day {
 }
 
 /* 12. Kabut di Malam Hari */
-body.theme-fog-night {
+body:not(.light-mode).theme-fog-night {
     --bg-main: #0c0e0e;
     --bg-surface: #131616;
     --bg-surface-elevated: #1a1e1e;
     --bg-input: #0f1212;
     --border-color: #212626;
     --border-hover: #303737;
+}
+
+/* ==========================================================================
+   MODE TERANG KOMPREHENSIF (FULL LIGHT MODE)
+   Latar belakang terang bersih, kartu putih, teks gelap kontras & jelas
+   ========================================================================== */
+body.light-mode {
+    --bg-main: #f8fafc;
+    --bg-surface: #ffffff;
+    --bg-surface-elevated: #f1f5f9;
+    --bg-input: #ffffff;
+
+    --border-color: #e2e8f0;
+    --border-hover: #cbd5e1;
+    --border-active: #2563eb;
+
+    --text-white: #0f172a;
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+
+    background-color: var(--bg-main) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Nuansa Cuaca Halus di Mode Terang (Subtle Light Atmosphere) */
+body.light-mode.theme-rain-day,
+body.light-mode.theme-rain-night {
+    --bg-main: #f0f4f8;
+    --bg-surface: #ffffff;
+    --bg-surface-elevated: #e2e8f0;
+    --border-color: #cbd5e1;
+}
+
+body.light-mode.theme-storm-day,
+body.light-mode.theme-storm-night {
+    --bg-main: #edf0f5;
+    --bg-surface: #ffffff;
+    --bg-surface-elevated: #e2e8f0;
+    --border-color: #cbd5e1;
+}
+
+body.light-mode.theme-clouds-day,
+body.light-mode.theme-clouds-night {
+    --bg-main: #f4f6f8;
+    --bg-surface: #ffffff;
+    --bg-surface-elevated: #e9ecef;
+    --border-color: #dee2e6;
+}
+
+body.light-mode.theme-clear-sunset {
+    --bg-main: #fefcf6;
+    --bg-surface: #ffffff;
+    --bg-surface-elevated: #fef3c7;
+    --border-color: #fde68a;
+}
+
+/* Penyesuaian Komponen & Bootstrap Utility di Mode Terang */
+body.light-mode .text-white {
+    color: var(--text-white) !important;
+}
+
+body.light-mode .text-muted {
+    color: var(--text-muted) !important;
+}
+
+body.light-mode .text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+body.light-mode .btn-outline-light {
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+    background-color: var(--bg-surface-elevated) !important;
+}
+
+body.light-mode .btn-outline-light:hover {
+    color: #ffffff !important;
+    background-color: var(--color-blue) !important;
+    border-color: var(--color-blue) !important;
+}
+
+body.light-mode .btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(20%) !important;
+}
+
+body.light-mode .text-bg-dark {
+    background-color: var(--bg-surface) !important;
+    color: var(--text-primary) !important;
+}
+
+body.light-mode .badge.bg-dark {
+    background-color: var(--bg-surface-elevated) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+body.light-mode .badge.bg-secondary {
+    background-color: var(--bg-surface-elevated) !important;
+    color: var(--text-secondary) !important;
+    border-color: var(--border-color) !important;
+}
+
+body.light-mode .search-input {
+    color: var(--text-primary) !important;
+}
+
+body.light-mode .search-input::placeholder {
+    color: var(--text-muted) !important;
+}
+
+body.light-mode .search-autocomplete-dropdown {
+    background-color: #ffffff !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+    border-color: var(--border-color) !important;
+}
+
+body.light-mode .autocomplete-item:hover,
+body.light-mode .autocomplete-item.active {
+    background-color: var(--bg-surface-elevated) !important;
+}
+
+body.light-mode .skeleton-shimmer {
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%) !important;
+    background-size: 200% 100% !important;
+}
+
+body.light-mode .editorial-toast {
+    background-color: var(--bg-surface) !important;
+    color: var(--text-primary) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+body.light-mode .timeline-hour-card.is-now,
+body.light-mode .daily-card.is-today {
+    background-color: rgba(37, 99, 235, 0.06) !important;
+    border-color: var(--color-blue) !important;
 }
 
 * {
@@ -382,20 +491,75 @@ h1, h2, h3, h4, h5, h6, .font-heading {
     background-color: var(--bg-surface);
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    padding: 4px 6px;
-    transition: border-color 0.15s ease;
+    padding: 3px 6px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    position: relative;
 }
 .search-wrapper:focus-within {
-    border-color: var(--color-blue);
+    border-color: var(--color-blue) !important;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25) !important;
+}
+.search-wrapper > .bi-search {
+    font-size: 0.88rem;
+    margin-left: 6px;
+    margin-right: 2px;
+    color: var(--text-muted);
+    flex-shrink: 0;
 }
 .search-input {
-    background: transparent;
-    border: none;
-    outline: none;
+    flex: 1 1 auto;
+    min-width: 0;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-appearance: none;
+    appearance: none;
     color: var(--text-white);
     font-size: 0.88rem;
     padding: 6px 10px;
     width: 100%;
+}
+.search-input:focus,
+.search-input:focus-visible,
+.search-wrapper .search-input:focus,
+.search-wrapper .search-input:focus-visible,
+input.search-input:focus,
+input.search-input:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+.search-wrapper > i,
+.search-wrapper > button {
+    flex-shrink: 0;
+}
+.search-wrapper .btn-gps-action {
+    background: transparent !important;
+    border: none !important;
+    color: var(--text-muted);
+    padding: 5px 8px;
+    margin-right: 4px;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+.search-wrapper .btn-gps-action:hover {
+    color: var(--color-blue) !important;
+    background-color: var(--bg-surface-elevated) !important;
+}
+.search-wrapper .btn-gps-action:focus,
+.search-wrapper .btn-gps-action:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    color: var(--color-blue) !important;
+}
+.search-wrapper .btn-gps-action.active {
+    color: var(--color-blue) !important;
 }
 .search-input::placeholder {
     color: var(--text-muted);
@@ -983,7 +1147,7 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 }
 
 /* 5. Aksesibilitas: Keyboard Focus Outline (WCAG AA) */
-:focus-visible {
+:focus-visible:not(input):not(textarea):not(select):not(.search-input) {
     outline: 2px solid var(--color-blue);
     outline-offset: 2px;
 }
